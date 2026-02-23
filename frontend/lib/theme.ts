@@ -2,8 +2,8 @@
 
 import { createTheme } from "@mui/material/styles";
 
-/* ─── Soft color palette ─────────────────────────────────────────────────────
-   Slate / teal base instead of harsh purple. Warm neutrals for light mode.  */
+/* ─── Dark red / crimson palette ─────────────────────────────────────────────
+   Deep warm reds with neutral slates. Rich but not garish.                   */
 
 const shared = {
     shape: { borderRadius: 16 },
@@ -42,8 +42,8 @@ const shared = {
                     borderRadius: 12,
                     margin: "2px 8px",
                     "&.Mui-selected": {
-                        backgroundColor: "rgba(45, 212, 191, 0.10)",
-                        "&:hover": { backgroundColor: "rgba(45, 212, 191, 0.16)" },
+                        backgroundColor: "rgba(220, 38, 38, 0.10)",
+                        "&:hover": { backgroundColor: "rgba(220, 38, 38, 0.16)" },
                     },
                     "&:hover": { backgroundColor: "rgba(128,128,128,0.06)" },
                 },
@@ -57,14 +57,14 @@ export const darkTheme = createTheme({
     ...shared,
     palette: {
         mode: "dark",
-        primary: { main: "#2dd4bf", light: "#5eead4", dark: "#14b8a6" },       // teal
+        primary: { main: "#dc2626", light: "#ef4444", dark: "#b91c1c" },       // red
         secondary: { main: "#94a3b8", light: "#cbd5e1", dark: "#64748b" },     // slate
         error: { main: "#f87171" },
         success: { main: "#4ade80" },
         warning: { main: "#fbbf24" },
         info: { main: "#38bdf8" },
-        background: { default: "#0f1117", paper: "#171923" },
-        text: { primary: "#e2e8f0", secondary: "#94a3b8" },
+        background: { default: "#0c0a09", paper: "#1c1917" },                  // stone-950/900
+        text: { primary: "#e7e5e4", secondary: "#a8a29e" },                    // stone-200/400
         divider: "rgba(255,255,255,0.06)",
     },
     components: {
@@ -72,7 +72,7 @@ export const darkTheme = createTheme({
         MuiCard: {
             styleOverrides: {
                 root: {
-                    background: "rgba(23, 25, 35, 0.80)",
+                    background: "rgba(28, 25, 23, 0.80)",
                     backdropFilter: "blur(16px)",
                     WebkitBackdropFilter: "blur(16px)",
                     border: "1px solid rgba(255,255,255,0.06)",
@@ -84,7 +84,7 @@ export const darkTheme = createTheme({
         MuiDrawer: {
             styleOverrides: {
                 paper: {
-                    background: "rgba(15, 17, 23, 0.96)",
+                    background: "rgba(12, 10, 9, 0.96)",
                     backdropFilter: "blur(24px)",
                     WebkitBackdropFilter: "blur(24px)",
                     borderRight: "1px solid rgba(255,255,255,0.06)",
@@ -94,7 +94,7 @@ export const darkTheme = createTheme({
         MuiAppBar: {
             styleOverrides: {
                 root: {
-                    background: "rgba(23, 25, 35, 0.80)",
+                    background: "rgba(28, 25, 23, 0.80)",
                     backdropFilter: "blur(16px)",
                     WebkitBackdropFilter: "blur(16px)",
                     borderBottom: "1px solid rgba(255,255,255,0.06)",
@@ -110,14 +110,14 @@ export const lightTheme = createTheme({
     ...shared,
     palette: {
         mode: "light",
-        primary: { main: "#0d9488", light: "#14b8a6", dark: "#0f766e" },       // teal
+        primary: { main: "#b91c1c", light: "#dc2626", dark: "#991b1b" },       // red-700
         secondary: { main: "#64748b", light: "#94a3b8", dark: "#475569" },     // slate
         error: { main: "#ef4444" },
         success: { main: "#16a34a" },
         warning: { main: "#d97706" },
         info: { main: "#0284c7" },
-        background: { default: "#f8fafc", paper: "#ffffff" },
-        text: { primary: "#1e293b", secondary: "#64748b" },
+        background: { default: "#fafaf9", paper: "#ffffff" },                  // stone-50
+        text: { primary: "#1c1917", secondary: "#78716c" },                    // stone-900/500
         divider: "rgba(0,0,0,0.08)",
     },
     components: {

@@ -137,8 +137,8 @@ export default function DashboardLayout({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        bgcolor: isDark ? "rgba(45,212,191,0.10)" : "rgba(13,148,136,0.08)",
-                        border: `1px solid ${isDark ? "rgba(45,212,191,0.2)" : "rgba(13,148,136,0.15)"}`,
+                        bgcolor: isDark ? "rgba(220,38,38,0.10)" : "rgba(185,28,28,0.08)",
+                        border: `1px solid ${isDark ? "rgba(220,38,38,0.2)" : "rgba(185,28,28,0.15)"}`,
                     }}
                 >
                     <BarChartIcon sx={{ color: "primary.main", fontSize: 24 }} />
@@ -161,7 +161,7 @@ export default function DashboardLayout({
                             width: 38,
                             height: 38,
                             bgcolor: "primary.main",
-                            color: isDark ? "#0f1117" : "#ffffff",
+                            color: "#ffffff",
                             fontSize: 16,
                             fontWeight: 700,
                         }}
@@ -252,7 +252,7 @@ export default function DashboardLayout({
                             "&:hover": {
                                 borderColor: "primary.main",
                                 color: "primary.main",
-                                bgcolor: isDark ? "rgba(45,212,191,0.06)" : "rgba(13,148,136,0.04)",
+                                bgcolor: isDark ? "rgba(220,38,38,0.06)" : "rgba(185,28,28,0.04)",
                             },
                         }}
                     >
@@ -282,7 +282,7 @@ export default function DashboardLayout({
 
     return (
         <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default" }}>
-            {/* Soft background blobs — only in dark mode */}
+            {/* Soft background blobs — dark mode only */}
             {isDark && (
                 <Box
                     sx={{
@@ -298,7 +298,7 @@ export default function DashboardLayout({
                             left: "-20%",
                             width: "80%",
                             height: "80%",
-                            background: "radial-gradient(ellipse, rgba(45,212,191,0.06), transparent 70%)",
+                            background: "radial-gradient(ellipse, rgba(220,38,38,0.05), transparent 70%)",
                             animation: "floatBlob 15s ease-in-out infinite",
                         },
                         "&::after": {
@@ -308,7 +308,7 @@ export default function DashboardLayout({
                             right: "-20%",
                             width: "70%",
                             height: "70%",
-                            background: "radial-gradient(ellipse, rgba(56,189,248,0.05), transparent 70%)",
+                            background: "radial-gradient(ellipse, rgba(185,28,28,0.04), transparent 70%)",
                             animation: "floatBlob 18s ease-in-out infinite reverse",
                         },
                         "@keyframes floatBlob": {

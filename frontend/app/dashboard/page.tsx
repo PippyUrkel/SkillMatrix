@@ -43,7 +43,7 @@ const stats = [
         value: 72,
         suffix: "%",
         icon: <SchoolRoundedIcon />,
-        color: "#0d9488",
+        color: "#dc2626",
         type: "circular" as const,
     },
     {
@@ -82,21 +82,21 @@ const courseProgress = [
 
 const recentActivity = [
     { action: "Completed quiz", detail: "React Hooks — scored 92%", time: "2 hours ago", icon: <CheckCircleRoundedIcon />, color: "#16a34a" },
-    { action: "Started course", detail: "AWS Cloud Practitioner", time: "5 hours ago", icon: <PlayCircleFilledRoundedIcon />, color: "#0d9488" },
+    { action: "Started course", detail: "AWS Cloud Practitioner", time: "5 hours ago", icon: <PlayCircleFilledRoundedIcon />, color: "#dc2626" },
     { action: "Earned badge", detail: "TypeScript Expert", time: "1 day ago", icon: <EmojiEventsRoundedIcon />, color: "#d97706" },
     { action: "Submitted quiz", detail: "Python Basics — scored 88%", time: "2 days ago", icon: <CheckCircleRoundedIcon />, color: "#0284c7" },
-    { action: "Resumed course", detail: "System Design Fundamentals", time: "3 days ago", icon: <PlayCircleFilledRoundedIcon />, color: "#64748b" },
+    { action: "Resumed course", detail: "System Design Fundamentals", time: "3 days ago", icon: <PlayCircleFilledRoundedIcon />, color: "#78716c" },
 ];
 
 const skills = [
-    { name: "React", level: 90, color: "#0d9488" },
+    { name: "React", level: 90, color: "#dc2626" },
     { name: "TypeScript", level: 85, color: "#0284c7" },
     { name: "Python", level: 72, color: "#16a34a" },
     { name: "System Design", level: 55, color: "#d97706" },
     { name: "AWS", level: 40, color: "#ea580c" },
     { name: "Docker", level: 60, color: "#0369a1" },
     { name: "SQL", level: 78, color: "#059669" },
-    { name: "GraphQL", level: 45, color: "#db2777" },
+    { name: "GraphQL", level: 45, color: "#b91c1c" },
 ];
 
 const quickActions = [
@@ -104,7 +104,7 @@ const quickActions = [
         title: "Start a Quiz",
         description: "Test your knowledge with targeted assessments",
         icon: <QuizRoundedIcon sx={{ fontSize: 28 }} />,
-        color: "#0d9488",
+        color: "#dc2626",
     },
     {
         title: "Resume Course",
@@ -278,7 +278,6 @@ export default function DashboardPage() {
 
             {/* ─── Middle Row: Course Progress + Recent Activity ────────────── */}
             <Grid container spacing={2.5} sx={{ mb: 3 }}>
-                {/* Course Progress */}
                 <Grid size={{ xs: 12, lg: 7 }}>
                     <Card sx={{ height: "100%" }}>
                         <CardContent sx={{ p: 3 }}>
@@ -288,11 +287,11 @@ export default function DashboardPage() {
                                         sx={{
                                             width: 36, height: 36, borderRadius: 2,
                                             display: "flex", alignItems: "center", justifyContent: "center",
-                                            bgcolor: alpha("#0d9488", isDark ? 0.1 : 0.08),
-                                            border: `1px solid ${alpha("#0d9488", isDark ? 0.2 : 0.12)}`,
+                                            bgcolor: alpha("#dc2626", isDark ? 0.1 : 0.08),
+                                            border: `1px solid ${alpha("#dc2626", isDark ? 0.2 : 0.12)}`,
                                         }}
                                     >
-                                        <TrendingUpRoundedIcon sx={{ color: "#0d9488", fontSize: 20 }} />
+                                        <TrendingUpRoundedIcon sx={{ color: "#dc2626", fontSize: 20 }} />
                                     </Box>
                                     <Typography variant="h6" sx={{ fontSize: 17 }}>Course Progress</Typography>
                                 </Box>
@@ -336,7 +335,7 @@ export default function DashboardPage() {
                                                             borderRadius: 4,
                                                             bgcolor:
                                                                 course.progress === 100 ? "#16a34a"
-                                                                    : course.progress > 70 ? "#0d9488"
+                                                                    : course.progress > 70 ? "#dc2626"
                                                                         : course.progress > 50 ? "#0284c7"
                                                                             : "#d97706",
                                                         },
@@ -362,7 +361,6 @@ export default function DashboardPage() {
                     </Card>
                 </Grid>
 
-                {/* Recent Activity */}
                 <Grid size={{ xs: 12, lg: 5 }}>
                     <Card sx={{ height: "100%" }}>
                         <CardContent sx={{ p: 3 }}>
@@ -371,11 +369,11 @@ export default function DashboardPage() {
                                     sx={{
                                         width: 36, height: 36, borderRadius: 2,
                                         display: "flex", alignItems: "center", justifyContent: "center",
-                                        bgcolor: alpha("#64748b", isDark ? 0.1 : 0.08),
-                                        border: `1px solid ${alpha("#64748b", isDark ? 0.2 : 0.12)}`,
+                                        bgcolor: alpha("#78716c", isDark ? 0.1 : 0.08),
+                                        border: `1px solid ${alpha("#78716c", isDark ? 0.2 : 0.12)}`,
                                     }}
                                 >
-                                    <AccessTimeRoundedIcon sx={{ color: "#64748b", fontSize: 20 }} />
+                                    <AccessTimeRoundedIcon sx={{ color: "#78716c", fontSize: 20 }} />
                                 </Box>
                                 <Typography variant="h6" sx={{ fontSize: 17 }}>Recent Activity</Typography>
                             </Box>
@@ -416,7 +414,6 @@ export default function DashboardPage() {
 
             {/* ─── Bottom Row: Skills + Quick Actions ──────────────────────── */}
             <Grid container spacing={2.5}>
-                {/* Skill Overview */}
                 <Grid size={{ xs: 12, lg: 7 }}>
                     <Card>
                         <CardContent sx={{ p: 3 }}>
@@ -480,7 +477,6 @@ export default function DashboardPage() {
                     </Card>
                 </Grid>
 
-                {/* Quick Actions */}
                 <Grid size={{ xs: 12, lg: 5 }}>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, height: "100%" }}>
                         {quickActions.map((action) => (
