@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #e4e4e7;
-  --card: #12121a;
+  --background: #0f1117;
+  --foreground: #e2e8f0;
+  --card: #171923;
   --card-border: rgba(255, 255, 255, 0.06);
-  --primary: #6366f1;
-  --primary-hover: #818cf8;
-  --primary-glow: rgba(99, 102, 241, 0.25);
-  --accent: #a78bfa;
-  --muted: #71717a;
-  --danger: #ef4444;
-  --success: #22c55e;
+  --primary: #2dd4bf;
+  --primary-hover: #5eead4;
+  --primary-glow: rgba(45, 212, 191, 0.25);
+  --accent: #94a3b8;
+  --muted: #94a3b8;
+  --danger: #f87171;
+  --success: #4ade80;
   --input-bg: rgba(255, 255, 255, 0.04);
   --input-border: rgba(255, 255, 255, 0.1);
-  --input-focus: rgba(99, 102, 241, 0.5);
+  --input-focus: rgba(45, 212, 191, 0.5);
 }
 
 @theme inline {
@@ -44,7 +44,7 @@ body {
 
 /* Glassmorphism card */
 .glass-card {
-  background: rgba(18, 18, 26, 0.7);
+  background: rgba(23, 25, 35, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--card-border);
@@ -66,7 +66,7 @@ body {
   left: -20%;
   width: 80%;
   height: 80%;
-  background: radial-gradient(ellipse, rgba(99, 102, 241, 0.15), transparent 70%);
+  background: radial-gradient(ellipse, rgba(45, 212, 191, 0.08), transparent 70%);
   animation: float-blob 15s ease-in-out infinite;
 }
 
@@ -77,24 +77,34 @@ body {
   right: -20%;
   width: 70%;
   height: 70%;
-  background: radial-gradient(ellipse, rgba(167, 139, 250, 0.12), transparent 70%);
+  background: radial-gradient(ellipse, rgba(56, 189, 248, 0.06), transparent 70%);
   animation: float-blob 18s ease-in-out infinite reverse;
 }
 
 @keyframes float-blob {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(5%, 8%) scale(1.05); }
-  66% { transform: translate(-3%, -5%) scale(0.95); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(5%, 8%) scale(1.05);
+  }
+
+  66% {
+    transform: translate(-3%, -5%) scale(0.95);
+  }
 }
 
 /* Button glow effect */
 .btn-glow {
-  box-shadow: 0 0 20px var(--primary-glow), 0 0 60px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 20px var(--primary-glow), 0 0 60px rgba(45, 212, 191, 0.1);
   transition: all 0.3s ease;
 }
 
 .btn-glow:hover {
-  box-shadow: 0 0 30px var(--primary-glow), 0 0 80px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 30px var(--primary-glow), 0 0 80px rgba(45, 212, 191, 0.15);
   transform: translateY(-1px);
 }
 
@@ -109,6 +119,7 @@ input:focus {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -119,24 +130,38 @@ input:focus {
   animation: fade-in-up 0.6s ease-out forwards;
 }
 
-.animate-delay-100 { animation-delay: 0.1s; }
-.animate-delay-200 { animation-delay: 0.2s; }
-.animate-delay-300 { animation-delay: 0.3s; }
-.animate-delay-400 { animation-delay: 0.4s; }
+.animate-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animate-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animate-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animate-delay-400 {
+  animation-delay: 0.4s;
+}
 
 /* Shimmer */
 @keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
 }
 
 .text-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--foreground) 0%,
-    var(--accent) 50%,
-    var(--foreground) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--foreground) 0%,
+      var(--accent) 50%,
+      var(--foreground) 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
