@@ -12,6 +12,16 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
+    # API Keys
+    youtube_api_key: str = ""
+    google_gemini_api_key: str = ""
+    github_token: str = ""
+    onet_username: str = ""
+    onet_password: str = ""
+
+    # LLM
+    ollama_model: str = "alibayram/smollm3"
+
     # CORS
     cors_origins: str = "http://localhost:3000,http://localhost:3001"
 
