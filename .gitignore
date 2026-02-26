@@ -1,8 +1,2 @@
-#env related
-.env
-
-#python related
-.venv/
-__pycache__/
-
-#next related
+.gsd/
+.get-shit-done-for-antigravity/
