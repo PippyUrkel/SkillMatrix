@@ -6,3 +6,8 @@
 __pycache__/
 
 #next related
+.gsd/
+frontend/app/build_log.txt
+frontend/app/dist/
+frontend/app/node_modules/
+get-shit-done-for-antigravity/
