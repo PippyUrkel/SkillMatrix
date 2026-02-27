@@ -40,11 +40,14 @@ interface DashboardStore {
 
   // Actions
   fetchSkills: () => Promise<void>;
+  fetchSavedCurricula: () => Promise<void>;
+  fetchCourseDetail: (courseId: string) => Promise<Course | null>;
   evaluateGaps: (targetRole: string) => Promise<void>;
   generateCurriculum: (topic: string, constraints: any) => Promise<void>;
   sendChatMessage: (content: string) => Promise<void>;
   setActiveCourse: (course: Course | null) => void;
   updateCourseProgress: (courseId: string, progress: number) => void;
+  markLessonComplete: (courseId: string, lessonId: string) => void;
   completeCourse: (courseId: string) => void;
   saveJob: (jobId: string) => void;
   unsaveJob: (jobId: string) => void;
@@ -95,6 +98,96 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
     }
   },
 
+  fetchSavedCurricula: async () => {
+    try {
+      const saved = await api.get<any[]>('/api/curriculum/saved');
+      if (!saved || saved.length === 0) return;
+
+      const mappedCourses: Course[] = saved.map((c: any) => {
+        const pct: number = c.progress_percent ?? 0;
+        return {
+          id: c.id,
+          title: c.course_title,
+          description: `Saved path for ${c.topic}`,
+          thumbnail: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400',
+          channel: 'SkillMatrix AI',
+          duration: `${c.estimated_completion_days} days`,
+          skills: [c.topic],
+          complementarySkills: [],
+          progress: pct,                          // ← now accurate from Appwrite
+          status: pct >= 100 ? 'completed' as const : pct > 0 ? 'in_progress' as const : 'not_started' as const,
+          checkpoints: [],
+          modules: [],                             // loaded lazily on open
+        };
+      });
+
+      // Merge with local-only courses (don't duplicate saved ones)
+      set((state) => {
+        const savedIds = new Set(mappedCourses.map((c) => c.id));
+        const localOnly = state.courses.filter((c) => !savedIds.has(c.id));
+        const merged = [...mappedCourses, ...localOnly];
+        return {
+          courses: merged,
+          activeCourse: state.activeCourse ?? (merged.length > 0 ? merged[0] : null),
+        };
+      });
+    } catch (error) {
+      console.error('Failed to fetch saved curricula:', error);
+    }
+  },
+
+  fetchCourseDetail: async (courseId: string) => {
+    try {
+      const detail = await api.get<any>(`/api/curriculum/saved/${courseId}`);
+      // Hydrate lesson completion from server response
+      const completedIds = new Set<string>(detail.completed_lessons || []);
+      const modules = (detail.modules || []).map((m: any) => ({
+        id: `m-${m.module_number}`,
+        title: m.module_title,
+        lessons: (m.videos || []).map((v: any, vIdx: number) => {
+          const lessonId = `l-${m.module_number}-${vIdx}`;
+          return {
+            id: lessonId,
+            title: v.title,
+            duration: `${v.duration_minutes}m`,
+            type: 'video' as const,
+            completed: completedIds.has(lessonId), // ← from Appwrite
+            url: v.youtube_url,
+          };
+        }),
+      }));
+
+      const totalLessons = modules.reduce((s: number, m: any) => s + m.lessons.length, 0);
+      const doneLessons = modules.reduce((s: number, m: any) => s + m.lessons.filter((l: any) => l.completed).length, 0);
+      const progress = totalLessons > 0 ? Math.round((doneLessons / totalLessons) * 100) : 0;
+
+      const updatedCourse: Course = {
+        id: detail.id,
+        title: detail.course_title,
+        description: `Saved path for ${detail.topic}`,
+        thumbnail: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400',
+        channel: 'SkillMatrix AI',
+        duration: `${detail.estimated_completion_days} days`,
+        skills: [detail.topic],
+        complementarySkills: [],
+        progress,
+        status: progress >= 100 ? 'completed' as const : 'not_started' as const,
+        checkpoints: [],
+        modules,
+      };
+
+      set((state) => {
+        const updated = state.courses.map((c) => (c.id === courseId ? updatedCourse : c));
+        return { courses: updated, activeCourse: updatedCourse };
+      });
+
+      return updatedCourse;
+    } catch (error) {
+      console.error('Failed to fetch course detail:', error);
+      return null;
+    }
+  },
+
   evaluateGaps: async (targetRole: string) => {
     set({ isLoadingSkills: true });
     try {
@@ -124,14 +217,31 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       ];
 
       // Build skill categories for the radar chart
-      const categories = [
-        { name: 'Strong Skills', currentScore: (response.strong_subskills || []).length * 20, requiredScore: 100 },
-        { name: 'Growth Areas', currentScore: 20, requiredScore: (response.weak_subskills || []).length * 20 },
-      ];
-
-      // Synthesize job recommendations from skill data
+      // Each skill gets its own axis. Recharts needs >= 3 points to render a polygon.
       const strongList = response.strong_subskills || [];
       const weakList = response.weak_subskills || [];
+
+      const allSkillEntries = [
+        ...strongList.map((s: string) => ({ name: s, current: 85, required: 90 })),
+        ...weakList.map((s: string) => ({ name: s, current: 25, required: 80 })),
+      ].slice(0, 8); // cap at 8 for readability
+
+      // Pad to at least 5 axes so the radar draws a polygon
+      const padCount = Math.max(0, 5 - allSkillEntries.length);
+      const paddedEntries = [
+        ...allSkillEntries,
+        ...Array.from({ length: padCount }, (_, i) => ({
+          name: `Area ${i + 1}`,
+          current: 0,
+          required: 0,
+        })),
+      ];
+
+      const categories = paddedEntries.map((e) => ({
+        name: e.name.length > 14 ? e.name.slice(0, 12) + '…' : e.name,
+        currentScore: e.current,
+        requiredScore: e.required,
+      }));
       const allSkillNames = [...strongList, ...weakList];
 
       const jobTemplates = [
@@ -281,12 +391,53 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       ),
     })),
 
-  completeCourse: (courseId) =>
+  markLessonComplete: (courseId, lessonId) => {
+    return set((state) => {
+      const updatedCourses = state.courses.map((c) => {
+        if (c.id !== courseId) return c;
+        const updatedModules = c.modules.map((m) => ({
+          ...m,
+          lessons: m.lessons.map((l) =>
+            l.id === lessonId ? { ...l, completed: true } : l
+          ),
+        }));
+        const totalLessons = updatedModules.reduce((s, m) => s + m.lessons.length, 0);
+        const doneLessons = updatedModules.reduce(
+          (s, m) => s + m.lessons.filter((l) => l.completed).length,
+          0
+        );
+        const progress = totalLessons > 0 ? Math.round((doneLessons / totalLessons) * 100) : 0;
+        // Persist all completed lesson IDs to Appwrite (fire and forget)
+        const allCompleted = updatedModules
+          .flatMap((m) => m.lessons.filter((l) => l.completed).map((l) => l.id));
+        api.put(`/api/curriculum/saved/${courseId}/progress`, { completed_lessons: allCompleted })
+          .catch((err) => console.warn('Failed to save progress:', err));
+        return { ...c, modules: updatedModules, progress };
+      });
+      const updatedActive = updatedCourses.find((c) => c.id === courseId) ?? state.activeCourse;
+      return { courses: updatedCourses, activeCourse: updatedActive };
+    });
+  },
+
+  completeCourse: (courseId) => {
+    // Find the course topic before updating state
+    const course = get().courses.find((c) => c.id === courseId);
+    const topic = course?.skills?.[0] || course?.title || '';
+
     set((state) => ({
       courses: state.courses.map((c) =>
         c.id === courseId ? { ...c, status: 'completed' as const, progress: 100 } : c
       ),
-    })),
+    }));
+
+    // Add the course topic as a skill in the user profile (fire-and-forget)
+    if (topic) {
+      api.post('/api/profile/skills', {
+        skill_name: topic,
+        proficiency_level: 'advanced',
+      }).catch((err) => console.warn('Failed to add learned skill:', err));
+    }
+  },
 
   saveJob: (jobId) =>
     set((state) => ({

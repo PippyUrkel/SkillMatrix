@@ -24,11 +24,12 @@ interface DashboardPageProps {
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const { user } = useUserStore();
-  const { skillCategories, courses, jobs, activities, skills, activeCourse, fetchSkills, evaluateGaps } = useDashboardStore();
+  const { skillCategories, courses, jobs, activities, skills, activeCourse, fetchSkills, fetchSavedCurricula, evaluateGaps } = useDashboardStore();
 
   React.useEffect(() => {
     fetchSkills();
-  }, [fetchSkills]);
+    fetchSavedCurricula();
+  }, [fetchSkills, fetchSavedCurricula]);
 
   React.useEffect(() => {
     if (user?.targetRole) {
@@ -177,36 +178,58 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             </MatrixButton>
           </div>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={skillData}>
-                <PolarGrid stroke="#E2E8F0" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748B', fontSize: 12 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} />
-                <Radar
-                  name="Current"
-                  dataKey="A"
-                  stroke="#10B981"
-                  fill="#10B981"
-                  fillOpacity={0.3}
-                />
-                <Radar
-                  name="Required"
-                  dataKey="B"
-                  stroke="#64748B"
-                  fill="#64748B"
-                  fillOpacity={0.1}
-                  strokeDasharray="4 4"
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #E2E8F0',
-                    borderRadius: '8px',
-                  }}
-                  itemStyle={{ color: '#0F172A' }}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
+            {skillData.length >= 3 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="75%" data={skillData}>
+                  <PolarGrid stroke="#E2E8F0" />
+                  <PolarAngleAxis
+                    dataKey="subject"
+                    tick={{ fill: '#64748B', fontSize: 11 }}
+                  />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                  <Radar
+                    name="Current"
+                    dataKey="A"
+                    stroke="#10B981"
+                    fill="#10B981"
+                    fillOpacity={0.35}
+                  />
+                  <Radar
+                    name="Required"
+                    dataKey="B"
+                    stroke="#64748B"
+                    fill="#64748B"
+                    fillOpacity={0.08}
+                    strokeDasharray="4 4"
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#fff',
+                      border: '1px solid #E2E8F0',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                    }}
+                    itemStyle={{ color: '#0F172A' }}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center gap-3">
+                <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center">
+                  <Zap className="w-7 h-7 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-slate-700 font-semibold text-sm">No skill data yet</p>
+                  <p className="text-slate-400 text-xs mt-1">Run a Skill Gap analysis to see your radar chart</p>
+                </div>
+                <button
+                  onClick={() => onNavigate('/dashboard/skill-gap')}
+                  className="text-xs text-emerald-600 font-semibold hover:underline"
+                >
+                  Go to Skill Gap →
+                </button>
+              </div>
+            )}
           </div>
         </MatrixCard>
 

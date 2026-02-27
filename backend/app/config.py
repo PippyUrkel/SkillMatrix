@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     appwrite_database_id: str
     appwrite_profiles_collection_id: str
     appwrite_skills_collection_id: str
+    appwrite_curricula_collection_id: str
 
     # JWT
     algorithm: str = "HS256"

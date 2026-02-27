@@ -9,9 +9,8 @@ class SkillEvaluationRequest(BaseModel):
         description="Target job title to evaluate skills against",
     )
     user_skills: list[str] = Field(
-        ...,
-        min_length=1,
-        description="List of the user's current skills",
+        default_factory=list,
+        description="List of the user's current skills (can be empty)",
     )
 
 

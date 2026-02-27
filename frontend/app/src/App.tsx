@@ -48,9 +48,18 @@ function App() {
 
   const isDashboard = !['login', 'onboarding'].includes(currentPage);
 
-  // Handle login
-  const handleLogin = () => {
-    setCurrentPage('onboarding');
+  // Handle login — called by LoginPage after successful login or signup
+  const handleLogin = (isNewUser?: boolean) => {
+    // Refresh user state, then decide where to go
+    const currentUser = useUserStore.getState().user;
+    const hasCompletedOnboarding =
+      !!currentUser?.targetRole || localStorage.getItem('onboarding_complete') === 'true';
+
+    if (isNewUser && !hasCompletedOnboarding) {
+      setCurrentPage('onboarding');
+    } else {
+      setCurrentPage('dashboard');
+    }
   };
 
   // Handle navigation
@@ -62,6 +71,7 @@ function App() {
 
   // Handle onboarding completion
   const handleOnboardingComplete = () => {
+    localStorage.setItem('onboarding_complete', 'true');
     setCurrentPage('dashboard');
   };
 

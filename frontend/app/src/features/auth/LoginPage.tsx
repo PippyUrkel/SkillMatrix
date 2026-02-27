@@ -5,7 +5,7 @@ import { Sparkles, Mail, Lock, ArrowRight, Github, Linkedin } from 'lucide-react
 import { useUserStore } from '@/stores/userStore';
 
 interface LoginPageProps {
-  onLogin: () => void;
+  onLogin: (isNewUser?: boolean) => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
@@ -22,11 +22,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     try {
       if (isLogin) {
         await login({ email, password });
-        onLogin();
+        onLogin(false); // Returning user — skip onboarding
       } else {
         await signup({ email, password, name: fullName });
-        setIsLogin(true); // Switch to login after signup
-        alert('Account created! Please sign in.');
+        onLogin(true); // Brand new user — show onboarding
       }
     } catch (error: any) {
       alert(error.message || 'Authentication failed');

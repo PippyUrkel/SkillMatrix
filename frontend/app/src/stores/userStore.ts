@@ -57,29 +57,25 @@ export const useUserStore = create<UserStore>((set) => ({
   login: async (credentials) => {
     set({ isLoading: true });
     try {
-      // 1. Authenticate and get JWT
       const authRes = await api.post<AuthResponse>('/api/auth/login', credentials);
 
-      // 2. Store the JWT for subsequent requests
       if (authRes.session?.access_token) {
         setAuthToken(authRes.session.access_token);
       }
 
-      // 3. Build initial user from auth response (minimal: id + email)
       const mappedUser: User = {
         id: authRes.user.id,
         email: authRes.user.email,
-        fullName: '', // Will be populated from profile
+        fullName: '',
       };
 
-      // 4. Fetch full profile now that we have a token
       try {
         const profile = await api.get<ProfileResponse>('/api/profile/');
-        mappedUser.fullName = profile.name || 'User';
+        // Use stored name, or fall back to email prefix (never the generic 'User')
+        mappedUser.fullName = profile.name || credentials.email.split('@')[0];
         mappedUser.targetRole = profile.target_job || '';
       } catch {
-        // Profile may not exist yet for new users — that's fine
-        mappedUser.fullName = 'User';
+        mappedUser.fullName = credentials.email.split('@')[0];
       }
 
       set({ user: mappedUser, isAuthenticated: true, isLoading: false });
@@ -94,16 +90,25 @@ export const useUserStore = create<UserStore>((set) => ({
     try {
       const authRes = await api.post<AuthResponse>('/api/auth/signup', credentials);
 
-      // Signup auto-logs in (backend calls sign_in after sign_up)
       if (authRes.session?.access_token) {
         setAuthToken(authRes.session.access_token);
       }
 
+      const displayName = credentials.name || credentials.email.split('@')[0];
       const mappedUser: User = {
         id: authRes.user.id,
         email: authRes.user.email,
-        fullName: credentials.name || 'User',
+        fullName: displayName,
       };
+
+      // Persist name to backend profile immediately so it survives page refresh
+      if (credentials.name) {
+        try {
+          await api.put('/api/profile/', { name: credentials.name });
+        } catch {
+          // Non-critical — name will still show in current session
+        }
+      }
 
       set({ user: mappedUser, isAuthenticated: true, isLoading: false });
     } catch (error) {
@@ -113,7 +118,6 @@ export const useUserStore = create<UserStore>((set) => ({
   },
 
   fetchMe: async () => {
-    // Only attempt if we have a stored token
     const token = localStorage.getItem('sm_access_token');
     if (!token) {
       set({ user: null, isAuthenticated: false });
@@ -127,21 +131,20 @@ export const useUserStore = create<UserStore>((set) => ({
       const mappedUser: User = {
         id: me.id,
         email: me.email,
-        fullName: '', // Will be filled from profile
+        fullName: '',
       };
 
-      // Fetch full profile
       try {
         const profile = await api.get<ProfileResponse>('/api/profile/');
-        mappedUser.fullName = profile.name || 'User';
+        // Use stored name, or fall back to email prefix (never 'User')
+        mappedUser.fullName = profile.name || me.email.split('@')[0];
         mappedUser.targetRole = profile.target_job || '';
       } catch {
-        mappedUser.fullName = 'User';
+        mappedUser.fullName = me.email.split('@')[0];
       }
 
       set({ user: mappedUser, isAuthenticated: true, isLoading: false });
     } catch {
-      // Token expired or invalid
       clearAuthToken();
       set({ user: null, isAuthenticated: false, isLoading: false });
     }

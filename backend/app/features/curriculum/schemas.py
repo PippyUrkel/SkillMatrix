@@ -77,3 +77,34 @@ class CurriculumResponse(BaseModel):
     total_modules: int
     estimated_completion_days: int
     modules: list[ModuleItem]
+
+
+class SavedCurriculumSummary(BaseModel):
+    """Lightweight curriculum entry shown in the dashboard list."""
+    id: str
+    course_title: str
+    topic: str
+    level: str
+    total_modules: int
+    total_lessons: int = 0
+    estimated_completion_days: int
+    created_at: str
+    progress_percent: int = 0
+    completed_lessons_count: int = 0
+
+
+class SavedCurriculumDetail(SavedCurriculumSummary):
+    """Full curriculum with all module data and progress."""
+    modules: list[ModuleItem]
+    completed_lessons: list[str] = Field(
+        default_factory=list,
+        description="List of lesson IDs the user has completed",
+    )
+
+
+class ProgressUpdateRequest(BaseModel):
+    """Payload for updating lesson progress on a saved curriculum."""
+    completed_lessons: list[str] = Field(
+        ...,
+        description="Full list of completed lesson IDs for this curriculum",
+    )
