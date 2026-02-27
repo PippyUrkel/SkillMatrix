@@ -22,6 +22,7 @@ import {
   Maximize2,
   Minimize2,
   X,
+  Sparkles,
 } from 'lucide-react';
 import { AIHelper } from '@/features/aihelper';
 import confetti from 'canvas-confetti';
@@ -31,8 +32,21 @@ interface LearningPageProps {
 }
 
 export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
-  const { courses, activeCourse, setActiveCourse, completeCourse, isChatOpen, setChatOpen, isSidebarCollapsed, toggleSidebar } = useDashboardStore();
+  const {
+    courses,
+    activeCourse,
+    setActiveCourse,
+    completeCourse,
+    isChatOpen,
+    setChatOpen,
+    isSidebarCollapsed,
+    toggleSidebar,
+    generateCurriculum,
+    isLoadingCurriculum
+  } = useDashboardStore();
+
   const { addXP, user } = useUserStore();
+
   const [activeTab, setActiveTab] = useState<'overview' | 'checkpoints' | 'notes'>('overview');
   const [notes, setNotes] = useState('');
   const [notesMode, setNotesMode] = useState<'edit' | 'preview'>('edit');
@@ -41,6 +55,35 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
   const [focusMode, setFocusMode] = useState(false);
   const [showMiniPlayer, setShowMiniPlayer] = useState(false);
   const [showStreakToast, setShowStreakToast] = useState(false);
+  const [genTopic, setGenTopic] = useState(user?.targetRole || '');
+  const [selectedLessonUrl, setSelectedLessonUrl] = useState<string | null>(null);
+
+  // Extract YouTube video ID from various URL formats
+  const getYouTubeEmbedId = (url: string): string | null => {
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=)([^&]+)/,
+      /(?:youtu\.be\/)([^?]+)/,
+      /(?:youtube\.com\/embed\/)([^?]+)/,
+    ];
+    for (const p of patterns) {
+      const match = url.match(p);
+      if (match) return match[1];
+    }
+    return null;
+  };
+
+  // Find the first available video URL from the course
+  const getActiveVideoUrl = (): string | null => {
+    if (selectedLessonUrl) return selectedLessonUrl;
+    if (!activeCourse) return null;
+    for (const m of activeCourse.modules) {
+      for (const l of m.lessons) {
+        if (l.url) return l.url;
+      }
+    }
+    return null;
+  };
+
   const videoRef = useRef<HTMLDivElement>(null);
   const prevSidebarState = useRef(isSidebarCollapsed);
 
@@ -83,6 +126,54 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [focusMode]);
 
+  // Automatic course selection if none active but list has items
+  useEffect(() => {
+    if (!activeCourse && courses.length > 0) {
+      setActiveCourse(courses[0]);
+    }
+  }, [activeCourse, courses, setActiveCourse]);
+
+  // Handle empty state (no courses at all)
+  if (!activeCourse && courses.length === 0) {
+    return (
+      <DashboardLayout activeItem="learning" onNavigate={onNavigate} title="Learning Path">
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-center max-w-2xl mx-auto px-6">
+          <div className="w-20 h-20 bg-emerald-100 rounded-3xl flex items-center justify-center mb-6 text-emerald-600">
+            <Sparkles className="w-10 h-10 animate-pulse" />
+          </div>
+          <h2 className="text-3xl font-bold text-slate-900 mb-4">Start Your Learning Journey</h2>
+          <p className="text-slate-500 mb-8 leading-relaxed">
+            Tell me what you want to learn, and I'll generate a custom, progressive curriculum
+            complete with curated YouTube resources tailored to your skill gaps.
+          </p>
+
+          <div className="w-full relative group">
+            <input
+              type="text"
+              value={genTopic}
+              onChange={(e) => setGenTopic(e.target.value)}
+              placeholder="e.g. System Design, Advanced React, Docker..."
+              className="w-full bg-white border-2 border-slate-100 px-6 py-4 rounded-2xl text-lg font-medium focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/5 transition-all"
+            />
+            <MatrixButton
+              className="mt-6 w-full py-4 text-lg"
+              disabled={!genTopic.trim() || isLoadingCurriculum}
+              onClick={() => generateCurriculum(genTopic, { durationDays: 7, dailyMinutes: 60 })}
+            >
+              {isLoadingCurriculum ? 'Curating your path...' : 'Generate My Path'}
+              {!isLoadingCurriculum && <ChevronRight className="w-5 h-5 ml-2" />}
+            </MatrixButton>
+          </div>
+
+          <p className="mt-6 text-slate-400 text-sm">
+            Based on your identified role: <span className="text-emerald-500 font-bold">{user?.targetRole}</span>
+          </p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Waiting for first course to reflect in activeCourse after generation or selection
   if (!activeCourse) return null;
 
   const currentCourse = activeCourse;
@@ -146,25 +237,33 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
           "flex flex-col gap-4 transition-all duration-300 min-w-0 overflow-y-auto custom-scrollbar",
           focusMode ? "flex-1" : isChatOpen ? "flex-[2]" : "flex-[3]"
         )}>
-          {/* Video Player */}
+          {/* Video Player — YouTube Embed */}
           <MatrixCard className="flex-shrink-0 p-4" ref={videoRef}>
             <div className={cn(
-              "bg-slate-900 rounded-xl overflow-hidden mb-4 relative group",
+              "bg-slate-900 rounded-xl overflow-hidden mb-4 relative",
               focusMode ? "aspect-[21/9]" : "aspect-video"
             )}>
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all cursor-pointer">
-                <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform">
-                  <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1" />
-                </div>
-              </div>
-              <img src={currentCourse.thumbnail} alt="" className="w-full h-full object-cover opacity-60" />
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-800 border border-white/20" />
-                  <span className="text-white text-sm font-medium">{currentCourse.channel}</span>
-                </div>
-                <div className="px-2 py-1 bg-black/40 backdrop-blur-md rounded text-white text-[10px] font-bold">1080p</div>
-              </div>
+              {(() => {
+                const videoUrl = getActiveVideoUrl();
+                const videoId = videoUrl ? getYouTubeEmbedId(videoUrl) : null;
+                if (videoId) {
+                  return (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
+                      title={currentCourse.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full rounded-xl"
+                    />
+                  );
+                }
+                return (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60">
+                    <PlayCircle className="w-16 h-16 text-white/50 mb-3" />
+                    <p className="text-white/60 text-sm">Select a lesson to start watching</p>
+                  </div>
+                );
+              })()}
             </div>
             <div className="flex items-start justify-between">
               <div>
@@ -410,9 +509,13 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
                           return (
                             <div
                               key={lesson.id}
+                              onClick={() => {
+                                if (lesson.url) setSelectedLessonUrl(lesson.url);
+                              }}
                               className={cn(
                                 "flex items-center gap-3 px-4 py-3 pl-11 hover:bg-slate-100/60 transition-colors cursor-pointer border-t border-slate-100/60",
-                                lesson.completed && "opacity-60"
+                                lesson.completed && "opacity-60",
+                                selectedLessonUrl === lesson.url && "bg-emerald-50/60 border-l-2 border-l-emerald-500"
                               )}
                             >
                               {/* Completion checkbox */}

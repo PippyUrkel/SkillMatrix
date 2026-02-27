@@ -32,8 +32,8 @@ export const ProgressPage: React.FC<ProgressPageProps> = ({ onNavigate }) => {
   const { achievements, progressData } = useDashboardStore();
   const [linkedInPost, setLinkedInPost] = useState('');
 
-  const xpToNextLevel = user ? (user.level * 500) - user.xp : 0;
-  const xpProgress = user ? ((user.xp % 500) / 500) * 100 : 0;
+  const xpToNextLevel = user ? ((user.level || 1) * 500) - (user.xp || 0) : 0;
+  const xpProgress = user ? (((user.xp || 0) % 500) / 500) * 100 : 0;
 
   const stats = [
     {
@@ -105,7 +105,7 @@ The AI-powered skill gap analysis helped me focus on exactly what I needed to le
             <div>
               <h2 className="text-2xl font-bold text-slate-900">{user?.fullName}</h2>
               <p className="text-slate-500">Level {user?.level} — Skill Builder</p>
-              <p className="text-emerald-600 font-semibold">{user?.xp.toLocaleString()} XP</p>
+              <p className="text-emerald-600 font-semibold">{(user?.xp || 0).toLocaleString()} XP</p>
             </div>
           </div>
 
@@ -135,7 +135,7 @@ The AI-powered skill gap analysis helped me focus on exactly what I needed to le
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-2xl font-bold text-slate-900">{Math.round(xpProgress)}%</span>
-                <span className="text-xs text-slate-500">to Level {user ? user.level + 1 : 1}</span>
+                <span className="text-xs text-slate-500">to Level {user ? (user.level || 1) + 1 : 1}</span>
               </div>
             </div>
             <div className="ml-6">

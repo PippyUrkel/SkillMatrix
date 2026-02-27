@@ -66,18 +66,24 @@ class SkillAnalyzer:
         self, text: str, source: DataSource, target_role: str
     ) -> SkillGapReport:
         """Extract structured JSON from LLM response."""
+        # Strip <think> tags and their contents
+        cleaned = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+        
         # Strip markdown fences
-        cleaned = re.sub(r"```(?:json)?\s*", "", text).strip().rstrip("`")
+        cleaned = re.sub(r"```(?:json)?\s*", "", cleaned).strip().rstrip("`")
 
         # Try to find a JSON object in the response
         match = re.search(r"\{.*\}", cleaned, re.DOTALL)
         if match:
             cleaned = match.group(0)
 
+        # Fix common trailing comma issues before closing brace/bracket
+        cleaned = re.sub(r",\s*([\]}])", r"\1", cleaned)
+
         try:
             data = json.loads(cleaned)
-        except json.JSONDecodeError:
-            logger.warning("Failed to parse LLM response as JSON — using fallback")
+        except json.JSONDecodeError as e:
+            logger.warning("Failed to parse LLM response as JSON — using fallback: %s", e)
             return self._fallback_report(source, target_role)
 
         # Build skill details

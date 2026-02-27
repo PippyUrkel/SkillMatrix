@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useOnboardingStore } from '@/stores';
+import { useUserStore } from '@/stores/userStore';
 import { StepIndicator } from './StepIndicator';
 import { ProfileSetupStep } from './ProfileSetupStep';
 import { PathSelectionStep } from './PathSelectionStep';
@@ -19,16 +20,20 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
     githubConnected,
     selectedPath,
     assessmentComplete,
+    analysisResult,
+    saveProfileToBackend,
   } = useOnboardingStore();
 
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const { updateUser } = useUserStore();
+  const [isSaving, setIsSaving] = useState(false);
 
   const totalSteps = 4;
 
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return githubConnected;
+        // Must have analyzed GitHub or uploaded resume
+        return githubConnected || analysisResult !== null;
       case 2:
         return selectedPath !== '';
       case 3:
@@ -41,14 +46,21 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
   };
 
   const handleNext = async () => {
-    if (currentStep === 3 && assessmentComplete) {
-      setIsAnalyzing(true);
-      setTimeout(() => {
-        setIsAnalyzing(false);
-        setCurrentStep(currentStep + 1);
-      }, 2000);
-    } else if (currentStep === totalSteps) {
-      onComplete();
+    if (currentStep === totalSteps) {
+      // Final step: save everything to backend
+      setIsSaving(true);
+      try {
+        await saveProfileToBackend();
+        // Update local user state with selected role
+        updateUser({ targetRole: selectedPath });
+        onComplete();
+      } catch (error) {
+        console.error('Failed to save profile:', error);
+        // Still complete onboarding even if save fails — data is in stores
+        onComplete();
+      } finally {
+        setIsSaving(false);
+      }
     } else {
       setCurrentStep(currentStep + 1);
     }
@@ -61,15 +73,15 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
   };
 
   const renderStep = () => {
-    if (isAnalyzing) {
+    if (isSaving) {
       return (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="relative mb-8">
             <div className="w-20 h-20 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin" />
             <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-emerald-500" />
           </div>
-          <h3 className="text-2xl font-bold text-slate-900 mb-2">Creating your personalized course...</h3>
-          <p className="text-slate-500">Analyzing your profile and quiz results</p>
+          <h3 className="text-2xl font-bold text-slate-900 mb-2">Setting up your profile...</h3>
+          <p className="text-slate-500">Saving your skills and preferences</p>
         </div>
       );
     }
@@ -115,7 +127,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         </div>
 
         {/* Navigation */}
-        {!isAnalyzing && (
+        {!isSaving && (
           <div className="flex items-center justify-between mt-8">
             <MatrixButton
               variant="ghost"
@@ -129,6 +141,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
             <MatrixButton
               onClick={handleNext}
               disabled={!canProceed()}
+              loading={isSaving}
               variant={currentStep === totalSteps ? 'primary' : 'secondary'}
             >
               {currentStep === totalSteps ? 'Start Learning' : 'Next'}

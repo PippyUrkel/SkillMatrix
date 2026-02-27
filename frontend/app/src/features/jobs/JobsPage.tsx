@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import type { Job } from '@/types';
 import { DashboardLayout } from '@/components/layout';
 import { MatrixCard } from '@/components/ui/MatrixCard';
 import { MatrixButton } from '@/components/ui/MatrixButton';
 import { MatrixBadge } from '@/components/ui/MatrixBadge';
-import { useDashboardStore } from '@/stores';
+import { useDashboardStore, useUserStore } from '@/stores';
 import { cn } from '@/lib/utils';
 import {
   Search,
@@ -15,6 +16,7 @@ import {
   Download,
   X,
   Building2,
+  Briefcase,
 } from 'lucide-react';
 
 interface JobsPageProps {
@@ -23,7 +25,8 @@ interface JobsPageProps {
 
 export const JobsPage: React.FC<JobsPageProps> = ({ onNavigate }) => {
   const { jobs, savedJobs, saveJob, unsaveJob } = useDashboardStore();
-  const [selectedJob, setSelectedJob] = useState(jobs[0]);
+  const { user } = useUserStore();
+  const [selectedJob, setSelectedJob] = useState<Job | null>(jobs[0] || null);
   const [activeTab, setActiveTab] = useState<'all' | 'saved'>('all');
   const [showCoverLetter, setShowCoverLetter] = useState(false);
   const [showApplyPanel, setShowApplyPanel] = useState(false);
@@ -35,6 +38,13 @@ export const JobsPage: React.FC<JobsPageProps> = ({ onNavigate }) => {
     minFit: 50,
     source: 'all',
   });
+
+  // Auto-select first job when jobs arrive
+  React.useEffect(() => {
+    if (!selectedJob && jobs.length > 0) {
+      setSelectedJob(jobs[0]);
+    }
+  }, [jobs, selectedJob]);
 
   const filteredJobs = jobs.filter((job) => {
     if (activeTab === 'saved' && !savedJobs.includes(job.id)) return false;
@@ -58,6 +68,8 @@ export const JobsPage: React.FC<JobsPageProps> = ({ onNavigate }) => {
   };
 
   const generateCoverLetter = () => {
+    if (!selectedJob) return '';
+    const userName = user?.fullName || 'Your Name';
     return `Dear Hiring Manager,
 
 I am excited to apply for the ${selectedJob.title} position at ${selectedJob.company}. With my skills in ${selectedJob.matchedSkills.join(', ')}, I am confident in my ability to contribute effectively to your team.
@@ -67,8 +79,28 @@ My experience aligns well with the requirements of this role, and I am particula
 I would welcome the opportunity to discuss how my background and skills would be a great fit for this position.
 
 Best regards,
-[Your Name]`;
+${userName}`;
   };
+
+  // Empty state when no jobs
+  if (jobs.length === 0) {
+    return (
+      <DashboardLayout activeItem="jobs" onNavigate={onNavigate} title="Job Matching">
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-center max-w-lg mx-auto">
+          <div className="w-20 h-20 bg-purple-100 rounded-3xl flex items-center justify-center mb-6">
+            <Briefcase className="w-10 h-10 text-purple-500" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">No Job Matches Yet</h2>
+          <p className="text-slate-500 mb-6">
+            Run a skill analysis first — I'll generate personalized job recommendations based on your skills and target role.
+          </p>
+          <MatrixButton onClick={() => onNavigate('skillgap')}>
+            Go to Skill Analysis
+          </MatrixButton>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout activeItem="jobs" onNavigate={onNavigate} title="Job Matching">
@@ -160,7 +192,7 @@ Best regards,
               onClick={() => setSelectedJob(job)}
               className={cn(
                 'p-4 rounded-xl border cursor-pointer transition-all',
-                selectedJob.id === job.id
+                selectedJob?.id === job.id
                   ? 'bg-emerald-50 border-emerald-300 shadow-sm'
                   : 'bg-white border-slate-200 hover:border-emerald-200 hover:shadow-sm'
               )}
@@ -213,74 +245,76 @@ Best regards,
         </div>
 
         {/* Job Detail */}
-        <MatrixCard className="lg:col-span-3">
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">{selectedJob.title}</h2>
-              <div className="flex items-center gap-4 text-slate-500">
-                <span className="flex items-center gap-1">
-                  <Building2 className="w-4 h-4" />
-                  {selectedJob.company}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  {selectedJob.location}
-                </span>
-              </div>
-            </div>
-            <MatrixBadge
-              variant={selectedJob.fitScore >= 90 ? 'success' : selectedJob.fitScore >= 80 ? 'accent' : 'warning'}
-              size="md"
-            >
-              {selectedJob.fitScore}% fit
-            </MatrixBadge>
-          </div>
-
-          <div className="mb-6">
-            <h4 className="text-slate-900 font-semibold mb-2">Job Description</h4>
-            <p className="text-slate-600">{selectedJob.description}</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div>
-              <h4 className="text-emerald-600 font-semibold mb-3">Skills You Have</h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedJob.matchedSkills.map((skill) => (
-                  <MatrixBadge key={skill} variant="success">
-                    {skill}
-                  </MatrixBadge>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h4 className="text-red-500 font-semibold mb-3">Skills You Need</h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedJob.missingSkills.map((skill) => (
-                  <span key={skill} className="flex items-center gap-1">
-                    <MatrixBadge variant="error">{skill}</MatrixBadge>
-                    <button
-                      onClick={() => onNavigate('/dashboard/learning')}
-                      className="text-emerald-600 text-xs hover:underline"
-                    >
-                      Learn
-                    </button>
+        {selectedJob && (
+          <MatrixCard className="lg:col-span-3">
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">{selectedJob.title}</h2>
+                <div className="flex items-center gap-4 text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <Building2 className="w-4 h-4" />
+                    {selectedJob.company}
                   </span>
-                ))}
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    {selectedJob.location}
+                  </span>
+                </div>
+              </div>
+              <MatrixBadge
+                variant={selectedJob.fitScore >= 90 ? 'success' : selectedJob.fitScore >= 80 ? 'accent' : 'warning'}
+                size="md"
+              >
+                {selectedJob.fitScore}% fit
+              </MatrixBadge>
+            </div>
+
+            <div className="mb-6">
+              <h4 className="text-slate-900 font-semibold mb-2">Job Description</h4>
+              <p className="text-slate-600">{selectedJob.description}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <h4 className="text-emerald-600 font-semibold mb-3">Skills You Have</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedJob.matchedSkills.map((skill: string) => (
+                    <MatrixBadge key={skill} variant="success">
+                      {skill}
+                    </MatrixBadge>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h4 className="text-red-500 font-semibold mb-3">Skills You Need</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedJob.missingSkills.map((skill: string) => (
+                    <span key={skill} className="flex items-center gap-1">
+                      <MatrixBadge variant="error">{skill}</MatrixBadge>
+                      <button
+                        onClick={() => onNavigate('/dashboard/learning')}
+                        className="text-emerald-600 text-xs hover:underline"
+                      >
+                        Learn
+                      </button>
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex gap-3">
-            <MatrixButton variant="secondary" onClick={() => setShowCoverLetter(true)}>
-              <FileText className="w-4 h-4 mr-2" />
-              AI Cover Letter
-            </MatrixButton>
-            <MatrixButton onClick={() => setShowApplyPanel(true)}>
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Apply Now
-            </MatrixButton>
-          </div>
-        </MatrixCard>
+            <div className="flex gap-3">
+              <MatrixButton variant="secondary" onClick={() => setShowCoverLetter(true)}>
+                <FileText className="w-4 h-4 mr-2" />
+                AI Cover Letter
+              </MatrixButton>
+              <MatrixButton onClick={() => setShowApplyPanel(true)}>
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Apply Now
+              </MatrixButton>
+            </div>
+          </MatrixCard>
+        )}
       </div>
 
       {/* Cover Letter Modal */}
@@ -320,7 +354,7 @@ Best regards,
       )}
 
       {/* Apply Panel */}
-      {showApplyPanel && (
+      {showApplyPanel && selectedJob && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex justify-end"
           onClick={() => setShowApplyPanel(false)}
@@ -341,7 +375,7 @@ Best regards,
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                   <p className="text-slate-500 text-sm">Auto-extracted from your profile:</p>
                   <ul className="mt-2 space-y-1">
-                    {selectedJob.matchedSkills.map((skill) => (
+                    {selectedJob.matchedSkills.map((skill: string) => (
                       <li key={skill} className="text-emerald-600 text-sm flex items-center gap-2">
                         <CheckIcon /> {skill}
                       </li>
@@ -355,7 +389,7 @@ Best regards,
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                   <p className="text-slate-500 text-sm mb-2">Add these skills to your resume:</p>
                   <div className="space-y-2">
-                    {selectedJob.missingSkills.map((skill) => (
+                    {selectedJob.missingSkills.map((skill: string) => (
                       <div key={skill} className="flex items-center gap-2 text-sm">
                         <span className="text-emerald-500">+</span>
                         <span className="text-slate-900">{skill}</span>

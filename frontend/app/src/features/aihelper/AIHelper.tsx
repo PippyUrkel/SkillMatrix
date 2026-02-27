@@ -9,7 +9,7 @@ interface AIHelperProps {
 }
 
 export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
-  const { chatMessages, addChatMessage, isChatOpen, setChatOpen } = useDashboardStore();
+  const { chatMessages, sendChatMessage, isChatOpen, setChatOpen, isLoadingChat } = useDashboardStore();
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -26,42 +26,10 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
 
   const handleSend = () => {
     if (!input.trim()) return;
-
-    const userMessage = {
-      id: Date.now().toString(),
-      role: 'user' as const,
-      content: input,
-      timestamp: new Date(),
-    };
-
-    addChatMessage(userMessage);
+    sendChatMessage(input);
     setInput('');
-
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant' as const,
-        content: generateResponse(input),
-        timestamp: new Date(),
-      };
-      addChatMessage(aiResponse);
-    }, 1000);
   };
 
-  const generateResponse = (query: string): string => {
-    const lowerQuery = query.toLowerCase();
-    if (lowerQuery.includes('explain')) {
-      return 'Let me break this down for you. The key concept here is about understanding how components work together in a system. Would you like me to go deeper into any specific part?';
-    }
-    if (lowerQuery.includes('quiz')) {
-      return 'Great idea! Here\'s a quick question: What is the primary purpose of load balancing in system design?';
-    }
-    if (lowerQuery.includes('example')) {
-      return 'Here\'s a real-world example: Imagine you\'re building a shopping website. When Black Friday hits, load balancers distribute traffic across multiple servers so no single server crashes.';
-    }
-    return 'I\'m here to help with your learning! Feel free to ask about any concept, request examples, or ask for a quiz to test your knowledge.';
-  };
 
   const startVoiceInput = () => {
     if (!('webkitSpeechRecognition' in window)) {
@@ -253,6 +221,16 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
               )}
             </div>
           ))}
+          {isLoadingChat && (
+            <div className="flex gap-3">
+              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0 animate-pulse">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <div className="bg-white text-slate-400 p-4 rounded-2xl text-xs border border-slate-100 italic">
+                AI is thinking...
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 

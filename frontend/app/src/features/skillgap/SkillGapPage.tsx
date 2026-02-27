@@ -3,7 +3,7 @@ import { DashboardLayout } from '@/components/layout';
 import { MatrixCard } from '@/components/ui/MatrixCard';
 import { MatrixButton } from '@/components/ui/MatrixButton';
 import { MatrixBadge } from '@/components/ui/MatrixBadge';
-import { useDashboardStore } from '@/stores';
+import { useDashboardStore, useUserStore } from '@/stores';
 import {
   BarChart,
   Bar,
@@ -13,7 +13,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { RefreshCw, ChevronDown, ExternalLink, PlayCircle } from 'lucide-react';
+import { RefreshCw, ExternalLink, PlayCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SkillGapPageProps {
@@ -21,9 +21,25 @@ interface SkillGapPageProps {
 }
 
 export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
-  const { skills, marketSkills } = useDashboardStore();
+  const { skills, marketSkills, evaluateGaps, isLoadingSkills } = useDashboardStore();
+  const { user } = useUserStore();
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'name' | 'gap' | 'category'>('gap');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const targetRole = user?.targetRole || 'Software Developer';
+
+  const handleRerun = async () => {
+    await evaluateGaps(targetRole);
+    setLastUpdated(new Date());
+  };
+
+  // Auto-evaluate on mount if no skills and we have a target role
+  React.useEffect(() => {
+    if (skills.length === 0 && targetRole) {
+      evaluateGaps(targetRole).then(() => setLastUpdated(new Date()));
+    }
+  }, []);
 
   const missingSkills = skills.filter((s) => s.gap === 'high');
   const partialSkills = skills.filter((s) => s.gap === 'medium');
@@ -49,6 +65,14 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
     }
   };
 
+  const getTimeAgo = () => {
+    if (!lastUpdated) return 'Not run yet';
+    const mins = Math.round((Date.now() - lastUpdated.getTime()) / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    return `${Math.round(mins / 60)}h ago`;
+  };
+
   return (
     <DashboardLayout activeItem="skillgap" onNavigate={onNavigate} title="Skill Gap Analysis">
       {/* Role Selector */}
@@ -57,17 +81,20 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
           <div>
             <p className="text-slate-500 text-sm mb-1">Analyzing for:</p>
             <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold text-slate-900">Software Engineer</h2>
-              <button className="text-emerald-600 hover:underline text-sm flex items-center gap-1">
-                Change <ChevronDown className="w-4 h-4" />
-              </button>
+              <h2 className="text-2xl font-bold text-slate-900">{targetRole}</h2>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <p className="text-slate-400 text-sm">Analysis updated 2 hours ago</p>
-            <MatrixButton variant="secondary" size="sm">
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Re-run Analysis
+            <p className="text-slate-400 text-sm">{getTimeAgo()}</p>
+            <MatrixButton
+              variant="secondary"
+              size="sm"
+              onClick={handleRerun}
+              disabled={isLoadingSkills}
+              loading={isLoadingSkills}
+            >
+              <RefreshCw className={cn("w-4 h-4 mr-2", isLoadingSkills && "animate-spin")} />
+              {isLoadingSkills ? 'Analyzing...' : 'Re-run Analysis'}
             </MatrixButton>
           </div>
         </div>

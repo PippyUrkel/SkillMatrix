@@ -24,39 +24,54 @@ interface DashboardPageProps {
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const { user } = useUserStore();
-  const { skillCategories, courses, jobs, activities } = useDashboardStore();
+  const { skillCategories, courses, jobs, activities, skills, activeCourse, fetchSkills, evaluateGaps } = useDashboardStore();
+
+  React.useEffect(() => {
+    fetchSkills();
+  }, [fetchSkills]);
+
+  React.useEffect(() => {
+    if (user?.targetRole) {
+      evaluateGaps(user.targetRole);
+    }
+  }, [user?.targetRole, evaluateGaps]);
+
+  const strongSkillCount = skills.filter(s => s.gap === 'none').length;
+  const totalSkillCount = skills.length;
+  const courseProgress = activeCourse?.progress || (courses.length > 0 ? courses[0].progress : 0);
+  const activeCourseTitle = activeCourse?.title || (courses.length > 0 ? courses[0].title : 'No active course');
 
   const stats = [
     {
       label: 'Course Progress',
-      value: '65%',
-      subtext: 'System Design Interviews',
+      value: `${courseProgress}%`,
+      subtext: activeCourseTitle,
       icon: PlayCircle,
-      trend: '+12% this week',
+      trend: courses.length > 0 ? `${courses.length} course(s)` : 'Start a course',
       color: 'bg-blue-500',
     },
     {
       label: 'Skills Mastered',
-      value: '14',
-      subtext: 'out of 22 total',
+      value: String(strongSkillCount),
+      subtext: totalSkillCount > 0 ? `out of ${totalSkillCount} total` : 'Analyze skills first',
       icon: Zap,
-      progress: 64,
+      progress: totalSkillCount > 0 ? Math.round((strongSkillCount / totalSkillCount) * 100) : 0,
       color: 'bg-emerald-500',
     },
     {
       label: 'Day Streak',
-      value: '12',
+      value: String(user?.streak || 0),
       subtext: 'days in a row',
       icon: TrendingUp,
-      trend: 'Keep it up!',
+      trend: (user?.streak || 0) > 0 ? 'Keep it up!' : 'Start learning!',
       color: 'bg-orange-500',
     },
     {
       label: 'Job Matches',
-      value: '47',
+      value: String(jobs.length),
       subtext: 'opportunities',
       icon: Briefcase,
-      trend: '5 new today',
+      trend: jobs.length > 0 ? 'View matches' : 'Evaluate skills first',
       color: 'bg-purple-500',
     },
   ];
@@ -68,14 +83,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
     fullMark: 100,
   }));
 
-  const sparklineData = [
-    { value: 45 },
-    { value: 52 },
-    { value: 48 },
-    { value: 58 },
-    { value: 65 },
-    { value: 72 },
-  ];
+  // Derive sparkline from skill proficiency scores
+  const sparklineData = skills.length > 0
+    ? skills.slice(0, 6).map((s) => ({
+      value: s.gap === 'none' ? 90 : s.gap === 'low' ? 60 : s.gap === 'medium' ? 40 : 20,
+    }))
+    : [{ value: 0 }, { value: 0 }, { value: 0 }, { value: 0 }];
 
   return (
     <DashboardLayout activeItem="dashboard" onNavigate={onNavigate} title="Dashboard">

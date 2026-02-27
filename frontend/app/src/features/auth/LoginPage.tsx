@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MatrixCard } from '@/components/ui/MatrixCard';
 import { MatrixButton } from '@/components/ui/MatrixButton';
 import { Sparkles, Mail, Lock, ArrowRight, Github, Linkedin } from 'lucide-react';
+import { useUserStore } from '@/stores/userStore';
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -12,17 +13,24 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { login, signup, isLoading } = useUserStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsLoading(false);
-    onLogin();
+
+    try {
+      if (isLogin) {
+        await login({ email, password });
+        onLogin();
+      } else {
+        await signup({ email, password, name: fullName });
+        setIsLogin(true); // Switch to login after signup
+        alert('Account created! Please sign in.');
+      }
+    } catch (error: any) {
+      alert(error.message || 'Authentication failed');
+    }
   };
 
   return (
@@ -61,7 +69,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 />
               </div>
             )}
-            
+
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 Email Address

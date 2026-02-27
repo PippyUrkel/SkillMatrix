@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { OnboardingWizard } from '@/features/onboarding';
 import { DashboardPage } from '@/features/dashboard';
@@ -8,9 +8,11 @@ import { JobsPage } from '@/features/jobs';
 import { ProgressPage } from '@/features/progress';
 import { SettingsPage } from '@/features/settings';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useUserStore } from '@/stores/userStore';
 import { CommandPalette } from '@/components/ui/CommandPalette';
 import { StudyTimer } from '@/components/ui/StudyTimer';
 import { OnboardingTooltips } from '@/components/ui/OnboardingTooltips';
+import { Spinner } from '@/components/ui/spinner';
 import './App.css';
 
 type Page =
@@ -26,7 +28,23 @@ type Page =
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('login');
+  const { isAuthenticated, fetchMe, isLoading, user } = useUserStore();
   useKeyboardShortcuts();
+
+  useEffect(() => {
+    fetchMe();
+  }, [fetchMe]);
+
+  useEffect(() => {
+    if (isAuthenticated && currentPage === 'login') {
+      // If user has a target role, they probably finished onboarding
+      if (user?.targetRole) {
+        setCurrentPage('dashboard');
+      } else {
+        setCurrentPage('onboarding');
+      }
+    }
+  }, [isAuthenticated, user, currentPage]);
 
   const isDashboard = !['login', 'onboarding'].includes(currentPage);
 
@@ -72,6 +90,14 @@ function App() {
         return <LoginPage onLogin={handleLogin} />;
     }
   };
+
+  if (isLoading && !isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Spinner className="w-8 h-8 text-emerald-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">

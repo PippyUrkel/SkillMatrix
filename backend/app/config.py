@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     ollama_model: str = "alibayram/smollm3"
 
     # CORS
-    cors_origins: str = "http://localhost:3000,http://localhost:3001"
+    cors_origins: str = "http://localhost:3000,http://localhost:3001,http://localhost:5173"
 
     @property
     def cors_origin_list(self) -> list[str]:

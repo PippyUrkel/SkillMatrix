@@ -6,15 +6,15 @@ export interface User {
   avatar?: string;
   targetRole?: string;
   bio?: string;
-  language: string;
-  voiceGuided: boolean;
-  autoPostLinkedIn: boolean;
-  level: number;
-  xp: number;
-  streak: number;
-  coursesCompleted: number;
-  skillsUnlocked: number;
-  linkedInPostsShared: number;
+  language?: string;
+  voiceGuided?: boolean;
+  autoPostLinkedIn?: boolean;
+  level?: number;
+  xp?: number;
+  streak?: number;
+  coursesCompleted?: number;
+  skillsUnlocked?: number;
+  linkedInPostsShared?: number;
 }
 
 // Onboarding Types
@@ -66,6 +66,7 @@ export interface Lesson {
   duration: string;
   type: 'video' | 'quiz' | 'reading';
   completed: boolean;
+  url?: string;
 }
 
 export interface Module {
