@@ -183,3 +183,59 @@ export interface Notification {
   read: boolean;
   timestamp: Date;
 }
+
+// Community Types
+export interface CommunityGroup {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  icon: string;
+  memberCount: number;
+  joined: boolean;
+}
+
+export interface ProgressSnapshot {
+  roadmap: string;
+  percentComplete: number;
+  currentNode: string;
+  timeSpentHours: number;
+  anonymous: boolean;
+}
+
+export interface CommunityPost {
+  id: string;
+  groupSlug: string;
+  authorId: string;
+  authorName: string;
+  title: string;
+  body: string;
+  tags: string[];
+  upvotes: number;
+  voted: boolean;
+  commentCount: number;
+  isPinned: boolean;
+  progressSnapshot?: ProgressSnapshot;
+  createdAt: string;
+}
+
+export interface CommunityComment {
+  id: string;
+  postId: string;
+  parentId?: string;
+  authorId: string;
+  authorName: string;
+  body: string;
+  createdAt: string;
+  replies: CommunityComment[];
+}
+
+export interface LeaderboardEntry {
+  userId: string;
+  userName: string;
+  postsCount: number;
+  totalUpvotes: number;
+  commentsCount: number;
+  streak: number;
+  badge: string;
+}

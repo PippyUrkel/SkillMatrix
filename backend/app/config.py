@@ -12,6 +12,13 @@ class Settings(BaseSettings):
     appwrite_skills_collection_id: str
     appwrite_curricula_collection_id: str
 
+    # Community
+    appwrite_community_groups_collection_id: str = "community_groups"
+    appwrite_community_posts_collection_id: str = "community_posts"
+    appwrite_community_comments_collection_id: str = "community_comments"
+    appwrite_community_votes_collection_id: str = "community_votes"
+    appwrite_community_memberships_collection_id: str = "community_memberships"
+
     # JWT
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30

@@ -6,6 +6,7 @@ import {
   PlayCircle,
   Briefcase,
   BarChart3,
+  Users,
   Settings,
   Menu,
   ChevronLeft,
@@ -24,6 +25,7 @@ const navItems: NavItem[] = [
   { id: 'skillgap', label: 'Skill Gap', icon: Zap, path: '/dashboard/skill-gap' },
   { id: 'learning', label: 'My Course', icon: PlayCircle, path: '/dashboard/learning' },
   { id: 'jobs', label: 'Jobs', icon: Briefcase, path: '/dashboard/jobs' },
+  { id: 'community', label: 'Community', icon: Users, path: '/dashboard/community' },
   { id: 'progress', label: 'Progress', icon: BarChart3, path: '/dashboard/progress' },
 ];
 
