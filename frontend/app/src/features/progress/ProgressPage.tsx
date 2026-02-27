@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DashboardLayout } from '@/components/layout';
 import { MatrixCard } from '@/components/ui/MatrixCard';
 import { MatrixButton } from '@/components/ui/MatrixButton';
+import { MatrixProgress } from '@/components/ui/MatrixProgress';
 import { useUserStore, useDashboardStore } from '@/stores';
 import {
   LineChart,
@@ -16,9 +17,15 @@ import {
   Flame,
   BookOpen,
   Share2,
-  Linkedin,
   Lock,
   Star,
+  Zap,
+  Trophy,
+  Linkedin,
+  TrendingUp,
+  CheckCircle,
+  GraduationCap,
+  Target,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
@@ -29,57 +36,153 @@ interface ProgressPageProps {
 
 export const ProgressPage: React.FC<ProgressPageProps> = ({ onNavigate }) => {
   const { user, shareLinkedInPost } = useUserStore();
-  const { achievements, progressData } = useDashboardStore();
+  const { courses, skills } = useDashboardStore();
   const [linkedInPost, setLinkedInPost] = useState('');
 
-  const xpToNextLevel = user ? ((user.level || 1) * 500) - (user.xp || 0) : 0;
-  const xpProgress = user ? (((user.xp || 0) % 500) / 500) * 100 : 0;
+  // ── Compute real stats from store ─────────────────────────────────────────
+  const completedCourses = useMemo(
+    () => courses.filter((c) => c.status === 'completed' || c.progress === 100),
+    [courses]
+  );
+  const totalLessonsCompleted = useMemo(
+    () =>
+      courses.reduce(
+        (sum, c) =>
+          sum + c.modules.reduce((s, m) => s + m.lessons.filter((l) => l.completed).length, 0),
+        0
+      ),
+    [courses]
+  );
+  const strongSkills = useMemo(() => skills.filter((s) => s.gap === 'none'), [skills]);
+  const totalCourseProgress = useMemo(() => {
+    if (courses.length === 0) return 0;
+    return Math.round(courses.reduce((s, c) => s + c.progress, 0) / courses.length);
+  }, [courses]);
+
+  // XP: 20 per lesson + 150 per completed course (mirrors the LearningPage actions)
+  const computedXP = useMemo(
+    () => totalLessonsCompleted * 20 + completedCourses.length * 150,
+    [totalLessonsCompleted, completedCourses]
+  );
+  const xp = user?.xp || computedXP;
+  const level = Math.floor(xp / 500) + 1;
+  const xpInLevel = xp % 500;
+  const xpProgress = (xpInLevel / 500) * 100;
 
   const stats = [
     {
       label: 'Courses Completed',
-      value: user?.coursesCompleted || 0,
+      value: completedCourses.length,
       icon: BookOpen,
       color: '#10B981',
+      bg: '#10B98120',
     },
     {
       label: 'Skills Unlocked',
-      value: user?.skillsUnlocked || 0,
+      value: strongSkills.length || skills.length,
       icon: Star,
       color: '#F59E0B',
+      bg: '#F59E0B20',
     },
     {
       label: 'Day Streak',
       value: user?.streak || 0,
       icon: Flame,
       color: '#EF4444',
+      bg: '#EF444420',
     },
     {
-      label: 'LinkedIn Posts',
-      value: user?.linkedInPostsShared || 0,
-      icon: Share2,
-      color: '#0077B5',
+      label: 'Lessons Done',
+      value: totalLessonsCompleted,
+      icon: CheckCircle,
+      color: '#6366F1',
+      bg: '#6366F120',
     },
   ];
 
-  const generateLinkedInPost = () => {
-    const courses = user?.coursesCompleted || 0;
-    const role = user?.targetRole || 'Software Engineer';
-    const oldScore = 40;
-    const newScore = 72;
-    return `I just completed ${courses} courses on SkillMatrix and improved my ${role} readiness from ${oldScore}% to ${newScore}%! 🚀
+  // ── Progress chart: one point per course showing its % ────────────────────
+  const progressData = useMemo(() => {
+    if (courses.length === 0) return [];
+    return courses.map((c, i) => ({
+      week: c.title.length > 12 ? c.title.slice(0, 10) + '…' : c.title,
+      overallScore: c.progress,
+      targetRoleMatch: Math.min(100, c.progress + 15),
+    }));
+  }, [courses]);
 
-The AI-powered skill gap analysis helped me focus on exactly what I needed to learn. No more random tutorials—just a clear path to my goal.
+  // ── Achievements (dynamic, based on real milestones) ──────────────────────
+  const achievements = useMemo(() => {
+    const list = [
+      {
+        id: 'first_lesson',
+        name: 'First Step',
+        description: 'Complete your first lesson',
+        icon: '🎯',
+        locked: totalLessonsCompleted < 1,
+        dateEarned: totalLessonsCompleted >= 1 ? new Date() : undefined,
+      },
+      {
+        id: 'five_lessons',
+        name: 'Getting Started',
+        description: 'Complete 5 lessons',
+        icon: '📚',
+        locked: totalLessonsCompleted < 5,
+        dateEarned: totalLessonsCompleted >= 5 ? new Date() : undefined,
+      },
+      {
+        id: 'first_course',
+        name: 'Course Champion',
+        description: 'Complete your first course',
+        icon: '🏆',
+        locked: completedCourses.length < 1,
+        dateEarned: completedCourses.length >= 1 ? new Date() : undefined,
+      },
+      {
+        id: 'three_courses',
+        name: 'Stacked Learner',
+        description: 'Complete 3 courses',
+        icon: '🎓',
+        locked: completedCourses.length < 3,
+        dateEarned: completedCourses.length >= 3 ? new Date() : undefined,
+      },
+      {
+        id: 'skill_evaluator',
+        name: 'Skill Evaluator',
+        description: 'Run your first skill gap analysis',
+        icon: '🔍',
+        locked: skills.length < 1,
+        dateEarned: skills.length >= 1 ? new Date() : undefined,
+      },
+      {
+        id: 'strong_skills',
+        name: 'Solid Foundation',
+        description: 'Have 3 strong skills',
+        icon: '💪',
+        locked: strongSkills.length < 3,
+        dateEarned: strongSkills.length >= 3 ? new Date() : undefined,
+      },
+      {
+        id: 'xp_500',
+        name: 'Level Up!',
+        description: 'Reach 500 XP',
+        icon: '⚡',
+        locked: xp < 500,
+        dateEarned: xp >= 500 ? new Date() : undefined,
+      },
+      {
+        id: 'xp_1000',
+        name: 'Power User',
+        description: 'Reach 1000 XP',
+        icon: '🌟',
+        locked: xp < 1000,
+        dateEarned: xp >= 1000 ? new Date() : undefined,
+      },
+    ];
+    // Unlocked first
+    return [...list.filter((a) => !a.locked), ...list.filter((a) => a.locked)];
+  }, [totalLessonsCompleted, completedCourses, skills, strongSkills, xp]);
 
-#SkillMatrix #CareerGrowth #ContinuousLearning #TechSkills`;
-  };
-
-  const handlePostToLinkedIn = () => {
-    shareLinkedInPost();
-    alert('Posted to LinkedIn successfully!');
-  };
-
-  const handleAchievementClick = (achievement: typeof achievements[0]) => {
+  const handleAchievementClick = (achievement: (typeof achievements)[0]) => {
     if (!achievement.locked) {
       confetti({
         particleCount: 80,
@@ -90,8 +193,35 @@ The AI-powered skill gap analysis helped me focus on exactly what I needed to le
     }
   };
 
+  const generateLinkedInPost = () => {
+    const role = user?.targetRole || 'Software Engineering';
+    return `I just completed ${completedCourses.length} course${completedCourses.length !== 1 ? 's' : ''} on SkillMatrix and earned ${xp} XP on my journey to becoming a ${role}! 🚀
+
+The AI-powered skill gap analysis + curated learning paths made it crystal clear what I needed to focus on.
+
+Lessons: ${totalLessonsCompleted} ✅ | Skills: ${skills.length} 🧠
+
+#SkillMatrix #CareerGrowth #ContinuousLearning #TechSkills`;
+  };
+
+  const handlePostToLinkedIn = () => {
+    shareLinkedInPost();
+    alert('Posted to LinkedIn successfully!');
+  };
+
+  const levelTitle = (lv: number) => {
+    if (lv < 2) return 'Skill Builder';
+    if (lv < 4) return 'Rising Talent';
+    if (lv < 7) return 'Skill Crafter';
+    if (lv < 10) return 'Domain Expert';
+    return 'Master';
+  };
+
+  const unlockedCount = achievements.filter((a) => !a.locked).length;
+
   return (
     <DashboardLayout activeItem="progress" onNavigate={onNavigate} title="Progress & Achievements">
+
       {/* XP and Level Banner */}
       <MatrixCard className="mb-8">
         <div className="flex flex-col md:flex-row items-center gap-8">
@@ -99,59 +229,60 @@ The AI-powered skill gap analysis helped me focus on exactly what I needed to le
           <div className="flex items-center gap-4">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-200">
               <span className="text-white text-2xl font-bold">
-                {user?.fullName.split(' ').map((n) => n[0]).join('')}
+                {(user?.fullName || 'U').split(' ').map((n) => n[0]).join('').toUpperCase()}
               </span>
             </div>
             <div>
               <h2 className="text-2xl font-bold text-slate-900">{user?.fullName}</h2>
-              <p className="text-slate-500">Level {user?.level} — Skill Builder</p>
-              <p className="text-emerald-600 font-semibold">{(user?.xp || 0).toLocaleString()} XP</p>
+              <p className="text-slate-500">Level {level} — {levelTitle(level)}</p>
+              <p className="text-emerald-600 font-semibold">{xp.toLocaleString()} XP</p>
             </div>
           </div>
 
-          {/* Progress Ring */}
-          <div className="flex-1 flex items-center justify-center">
+          {/* XP Ring */}
+          <div className="flex-1 flex items-center justify-center gap-6">
             <div className="relative w-32 h-32">
               <svg className="w-full h-full -rotate-90">
+                <circle cx="64" cy="64" r="56" fill="none" stroke="#E2E8F0" strokeWidth="12" />
                 <circle
-                  cx="64"
-                  cy="64"
-                  r="56"
-                  fill="none"
-                  stroke="#E2E8F0"
-                  strokeWidth="12"
-                />
-                <circle
-                  cx="64"
-                  cy="64"
-                  r="56"
-                  fill="none"
-                  stroke="#10B981"
-                  strokeWidth="12"
-                  strokeLinecap="round"
+                  cx="64" cy="64" r="56" fill="none"
+                  stroke="#10B981" strokeWidth="12" strokeLinecap="round"
                   strokeDasharray={`${(xpProgress / 100) * 351.86} 351.86`}
-                  className="transition-all duration-500"
+                  className="transition-all duration-700"
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-2xl font-bold text-slate-900">{Math.round(xpProgress)}%</span>
-                <span className="text-xs text-slate-500">to Level {user ? (user.level || 1) + 1 : 1}</span>
+                <span className="text-xs text-slate-500">to Lvl {level + 1}</span>
               </div>
             </div>
-            <div className="ml-6">
-              <p className="text-slate-500 text-sm">{xpToNextLevel} XP needed</p>
+            <div className="space-y-2">
+              <p className="text-slate-500 text-sm">{500 - xpInLevel} XP to next level</p>
+              <MatrixProgress value={xpProgress} className="w-40" showLabel size="sm" />
+              <p className="text-xs text-slate-400">
+                {unlockedCount}/{achievements.length} achievements unlocked
+              </p>
             </div>
           </div>
+
+          {/* Overall course progress */}
+          {courses.length > 0 && (
+            <div className="flex flex-col items-center gap-2 px-6 border-l border-slate-100">
+              <div className="text-3xl font-bold text-slateald-900">{totalCourseProgress}%</div>
+              <p className="text-slate-500 text-sm text-center">Avg course<br />progress</p>
+              <MatrixProgress value={totalCourseProgress} className="w-24" size="sm" />
+            </div>
+          )}
         </div>
       </MatrixCard>
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {stats.map((stat) => (
-          <MatrixCard key={stat.label} className="text-center">
+          <MatrixCard key={stat.label} className="text-center hover:shadow-md transition-shadow">
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
-              style={{ backgroundColor: `${stat.color}20` }}
+              style={{ backgroundColor: stat.bg }}
             >
               <stat.icon className="w-6 h-6" style={{ color: stat.color }} />
             </div>
@@ -161,47 +292,58 @@ The AI-powered skill gap analysis helped me focus on exactly what I needed to le
         ))}
       </div>
 
-      {/* Skill Timeline */}
+      {/* Course Progress Chart */}
       <MatrixCard className="mb-8">
-        <h3 className="text-lg font-semibold text-slate-900 mb-6">Skill Score Over Time</h3>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={progressData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-              <XAxis dataKey="week" stroke="#94A3B8" tick={{ fontSize: 12 }} />
-              <YAxis domain={[0, 100]} stroke="#94A3B8" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #E2E8F0',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
-                }}
-                itemStyle={{ color: '#334155' }}
-              />
-              <Line
-                type="monotone"
-                dataKey="overallScore"
-                stroke="#10B981"
-                strokeWidth={2}
-                name="Overall Score"
-              />
-              <Line
-                type="monotone"
-                dataKey="targetRoleMatch"
-                stroke="#6366F1"
-                strokeWidth={2}
-                strokeDasharray="4 4"
-                name="Target Role Match"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-slate-900">Course Progress</h3>
+          {courses.length > 0 && (
+            <span className="text-xs text-slate-400">{courses.length} course{courses.length !== 1 ? 's' : ''} in library</span>
+          )}
         </div>
+        {progressData.length > 0 ? (
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={progressData} margin={{ left: -10, right: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                <XAxis dataKey="week" stroke="#94A3B8" tick={{ fontSize: 11 }} />
+                <YAxis domain={[0, 100]} stroke="#94A3B8" tick={{ fontSize: 11 }} unit="%" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E2E8F0', borderRadius: '12px' }}
+                  itemStyle={{ color: '#334155' }}
+                  formatter={(v: number) => [`${v}%`]}
+                />
+                <Line type="monotone" dataKey="overallScore" stroke="#10B981" strokeWidth={2.5} dot={{ r: 4, fill: '#10B981' }} name="Progress" />
+                <Line type="monotone" dataKey="targetRoleMatch" stroke="#6366F1" strokeWidth={2} strokeDasharray="4 4" dot={false} name="Target Match" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-40 gap-3 text-center">
+            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-slate-700 font-semibold text-sm">No courses yet</p>
+              <p className="text-slate-400 text-xs">Generate a course to start tracking progress</p>
+            </div>
+            <button
+              onClick={() => onNavigate('/dashboard/learning')}
+              className="text-xs text-emerald-600 font-semibold hover:underline"
+            >
+              Go to Learning →
+            </button>
+          </div>
+        )}
       </MatrixCard>
 
       {/* Achievements Grid */}
       <MatrixCard className="mb-8">
-        <h3 className="text-lg font-semibold text-slate-900 mb-6">Achievements</h3>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-slate-900">Achievements</h3>
+          <span className="text-sm text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+            {unlockedCount} / {achievements.length}
+          </span>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {achievements.map((achievement) => (
             <div
@@ -210,28 +352,27 @@ The AI-powered skill gap analysis helped me focus on exactly what I needed to le
               className={cn(
                 'p-4 rounded-xl border text-center transition-all cursor-pointer',
                 achievement.locked
-                  ? 'bg-slate-50 border-slate-200 opacity-60'
-                  : 'bg-emerald-50/50 border-emerald-200 hover:shadow-md hover:border-emerald-300'
+                  ? 'bg-slate-50 border-slate-200 opacity-50'
+                  : 'bg-gradient-to-b from-emerald-50 to-white border-emerald-200 hover:shadow-md hover:border-emerald-300 hover:-translate-y-0.5'
               )}
             >
               <div className="relative w-16 h-16 mx-auto mb-3">
-                <div className="text-4xl">{achievement.icon}</div>
+                <div className="text-4xl leading-none flex items-center justify-center w-full h-full">
+                  {achievement.icon}
+                </div>
                 {achievement.locked && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-full">
-                    <Lock className="w-6 h-6 text-slate-400" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full">
+                    <Lock className="w-5 h-5 text-slate-400" />
                   </div>
                 )}
               </div>
-              <h4 className={cn(
-                'font-semibold mb-1 text-sm',
-                achievement.locked ? 'text-slate-400' : 'text-slate-900'
-              )}>
+              <h4 className={cn('font-semibold mb-1 text-sm', achievement.locked ? 'text-slate-400' : 'text-slate-900')}>
                 {achievement.name}
               </h4>
-              <p className="text-slate-500 text-xs">{achievement.description}</p>
-              {achievement.dateEarned && (
-                <p className="text-emerald-600 text-xs mt-2 font-medium">
-                  Earned {achievement.dateEarned.toLocaleDateString()}
+              <p className="text-slate-500 text-xs leading-snug">{achievement.description}</p>
+              {!achievement.locked && (
+                <p className="text-emerald-500 text-xs mt-2 font-medium flex items-center justify-center gap-1">
+                  <CheckCircle className="w-3 h-3" /> Unlocked
                 </p>
               )}
             </div>
@@ -239,49 +380,22 @@ The AI-powered skill gap analysis helped me focus on exactly what I needed to le
         </div>
       </MatrixCard>
 
-      {/* LinkedIn Share Section */}
+      {/* LinkedIn Share */}
       <MatrixCard>
         <h3 className="text-lg font-semibold text-slate-900 mb-4">Share Your Progress</h3>
-        <p className="text-slate-500 text-sm mb-4">
-          Celebrate your achievements and inspire others!
-        </p>
+        <p className="text-slate-500 text-sm mb-4">Celebrate your achievements and inspire others!</p>
         <textarea
           value={linkedInPost || generateLinkedInPost()}
           onChange={(e) => setLinkedInPost(e.target.value)}
-          className="w-full h-32 bg-slate-50 border border-slate-200 text-slate-900 p-4 rounded-xl resize-none focus:outline-none focus:border-emerald-500 mb-4"
+          className="w-full h-32 bg-slate-50 border border-slate-200 text-slate-900 p-4 rounded-xl resize-none focus:outline-none focus:border-emerald-500 mb-4 text-sm"
         />
         <MatrixButton onClick={handlePostToLinkedIn}>
           <Linkedin className="w-4 h-4 mr-2" />
           Post to LinkedIn
         </MatrixButton>
-
-        {/* Past Posts */}
-        <div className="mt-6 pt-6 border-t border-slate-200">
-          <h4 className="text-slate-900 font-medium mb-3">Recent Posts</h4>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-              <div>
-                <p className="text-slate-900 text-sm">Completed "System Design Interviews"</p>
-                <p className="text-slate-400 text-xs">Feb 20, 2024</p>
-              </div>
-              <div className="flex gap-3 text-slate-400 text-sm">
-                <span>24 likes</span>
-                <span>3 comments</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-              <div>
-                <p className="text-slate-900 text-sm">Reached Level 7 — Skill Builder</p>
-                <p className="text-slate-400 text-xs">Feb 15, 2024</p>
-              </div>
-              <div className="flex gap-3 text-slate-400 text-sm">
-                <span>42 likes</span>
-                <span>8 comments</span>
-              </div>
-            </div>
-          </div>
-        </div>
       </MatrixCard>
     </DashboardLayout>
   );
 };
+
+export default ProgressPage;
