@@ -13,6 +13,7 @@ from app.features.profile.routes import router as profile_router
 from app.features.fl_engine.routes import router as fl_router
 from app.features.fl_engine.orchestrator import get_orchestrator
 from app.features.jobs.routes import router as jobs_router
+from app.features.paid_courses.routes import router as paid_courses_router
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -62,6 +63,7 @@ app.include_router(skill_evaluation_router)
 app.include_router(profile_router)
 app.include_router(fl_router)
 app.include_router(jobs_router)
+app.include_router(paid_courses_router)
 
 
 @app.get("/")

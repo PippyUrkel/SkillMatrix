@@ -1,6 +1,5 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { useUserStore } from '@/stores';
 import {
   Home,
   Zap,
@@ -9,7 +8,6 @@ import {
   Bot,
   BarChart3,
   Settings,
-  LogOut,
   Menu,
   ChevronLeft,
 } from 'lucide-react';
@@ -37,17 +35,7 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeItem, onNavigate }) => {
-  const { user, logout } = useUserStore();
   const { isSidebarCollapsed, toggleSidebar } = useDashboardStore();
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
 
   return (
     <aside className={cn(
@@ -127,34 +115,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeItem, onNavigate }) => {
           <Settings className="w-5 h-5" strokeWidth={activeItem === 'settings' ? 3 : 2} />
           {!isSidebarCollapsed && <span className="uppercase tracking-wide text-xs">Settings</span>}
         </button>
-
-        {/* User Profile */}
-        <div className={cn(
-          'flex items-center gap-3 px-3 py-3 mt-2 bg-brutal-pink/20 border-2 border-black overflow-hidden transition-all',
-          isSidebarCollapsed ? 'justify-center px-2' : ''
-        )}>
-          <div className="w-10 h-10 bg-brutal-pink border-2 border-black flex items-center justify-center flex-shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            <span className="text-black font-black text-sm">
-              {user ? getInitials(user.fullName) : 'U'}
-            </span>
-          </div>
-          {!isSidebarCollapsed && (
-            <>
-              <div className="flex-1 min-w-0">
-                <p className="text-black text-sm font-black truncate">
-                  {user?.fullName || 'User'}
-                </p>
-                <p className="text-black/50 text-xs font-bold truncate">Level {user?.level}</p>
-              </div>
-              <button
-                onClick={logout}
-                className="text-black/40 hover:text-red-500 hover:bg-red-50 transition-colors p-1.5 border-2 border-transparent hover:border-black"
-              >
-                <LogOut className="w-4 h-4" strokeWidth={3} />
-              </button>
-            </>
-          )}
-        </div>
       </div>
     </aside>
   );

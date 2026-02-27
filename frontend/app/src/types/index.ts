@@ -17,6 +17,16 @@ export interface User {
   linkedInPostsShared?: number;
 }
 
+// RIASEC Interest Profile Types
+export interface RiasecScores {
+  R: number; // Realistic
+  I: number; // Investigative
+  A: number; // Artistic
+  S: number; // Social
+  E: number; // Enterprising
+  C: number; // Conventional
+}
+
 // Onboarding Types
 export interface OnboardingState {
   currentStep: number;
@@ -29,6 +39,7 @@ export interface OnboardingState {
   voiceGuided: boolean;
   language: string;
   autoPostLinkedIn: boolean;
+  riasecScores: RiasecScores | null;
 }
 
 // Career Path Types

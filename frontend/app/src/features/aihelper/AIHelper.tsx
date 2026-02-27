@@ -2,16 +2,20 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useDashboardStore } from '@/stores';
 import { MatrixButton } from '@/components/ui/MatrixButton';
 import { cn } from '@/lib/utils';
-import { Bot, X, Send, Mic, Sparkles } from 'lucide-react';
+import { Bot, X, Send, Mic, Sparkles, PhoneOff } from 'lucide-react';
+import { Conversation } from '@elevenlabs/client';
 
 interface AIHelperProps {
   variant?: 'floating' | 'panel';
 }
 
 export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
-  const { chatMessages, sendChatMessage, isChatOpen, setChatOpen, isLoadingChat } = useDashboardStore();
+  const { chatMessages, sendChatMessage, addChatMessage, isChatOpen, setChatOpen, isLoadingChat, activeVideoUrl } = useDashboardStore();
   const [input, setInput] = useState('');
-  const [isListening, setIsListening] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isAgentSpeaking, setIsAgentSpeaking] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const conversationInstance = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestedPrompts = [
@@ -30,27 +34,88 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
     setInput('');
   };
 
-
-  const startVoiceInput = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      alert('Voice recognition is not supported in your browser.');
+  const startVoiceInput = async () => {
+    if (isConnected || isConnecting) {
+      if (conversationInstance.current) {
+        await conversationInstance.current.endSession();
+      }
+      setIsConnected(false);
+      setIsAgentSpeaking(false);
+      setIsConnecting(false);
       return;
     }
 
-    const recognition = new (window as any).webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    try {
+      setIsConnecting(true);
+      await navigator.mediaDevices.getUserMedia({ audio: true });
 
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
-    };
+      let transcriptContext = "";
+      if (activeVideoUrl) {
+        try {
+          const res = await fetch(`http://localhost:8000/api/curriculum/transcript?youtube_url=${encodeURIComponent(activeVideoUrl)}`);
+          if (res.ok) {
+            const data = await res.json();
+            transcriptContext = data.transcript;
+          }
+        } catch (err) {
+          console.error("Failed to fetch transcript", err);
+        }
+      }
 
-    recognition.start();
+      conversationInstance.current = await Conversation.startSession({
+        agentId: 'agent_7301kjg96r6ee229kjh53b62hrej',
+        connectionType: 'webrtc',
+        dynamicVariables: {
+          youtube_transcript: transcriptContext || "No video context available.",
+        },
+        onConnect: () => {
+          setIsConnected(true);
+          setIsConnecting(false);
+          addChatMessage({
+            id: Date.now().toString(),
+            role: 'assistant',
+            content: transcriptContext ? 'Voice connection established with video context. Start speaking...' : 'Voice connection established. Start speaking...',
+            timestamp: new Date()
+          });
+        },
+        onDisconnect: () => {
+          setIsConnected(false);
+          setIsAgentSpeaking(false);
+          setIsConnecting(false);
+        },
+        onMessage: (message: any) => {
+          const text = message.message || message.text || '';
+          const role = message.role || 'assistant';
+          if (text) {
+            addChatMessage({
+              id: Date.now().toString() + Math.random(),
+              role: role === 'assistant' ? 'assistant' : 'user',
+              content: text,
+              timestamp: new Date()
+            });
+          }
+        },
+        onError: (error: any) => {
+          console.error("ElevenLabs error:", error);
+        },
+        onModeChange: (mode: any) => {
+          setIsAgentSpeaking(mode.mode === 'speaking');
+        }
+      });
+    } catch (error) {
+      console.error("Failed to start voice session:", error);
+      alert("Microphone access is required for voice chat, or connection failed.");
+      setIsConnecting(false);
+    }
   };
+
+  useEffect(() => {
+    return () => {
+      if (conversationInstance.current) {
+        conversationInstance.current.endSession();
+      }
+    };
+  }, []);
 
   if (variant === 'panel') {
     return (
@@ -164,14 +229,22 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-white">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-emerald-500 rounded-none flex items-center justify-center shadow-lg shadow-emerald-100">
+            <div className={cn(
+              "w-10 h-10 rounded-none flex items-center justify-center shadow-lg transition-colors",
+              isConnected ? (isAgentSpeaking ? "bg-emerald-500 shadow-emerald-200" : "bg-emerald-400 shadow-emerald-100") : "bg-emerald-600 shadow-emerald-200"
+            )}>
               <Bot className="w-6 h-6 text-white" />
             </div>
             <div>
               <h4 className="text-slate-900 font-bold text-lg">SkillMatrix AI</h4>
               <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 bg-emerald-500 rounded-none animate-pulse" />
-                <span className="text-slate-500 text-xs font-medium">Assistant Online</span>
+                <div className={cn(
+                  "w-2 h-2 rounded-none",
+                  isConnected ? "bg-emerald-500 animate-pulse" : (isConnecting ? "bg-yellow-400 animate-pulse" : "bg-slate-400")
+                )} />
+                <span className="text-slate-500 text-xs font-medium">
+                  {isConnected ? (isAgentSpeaking ? "Speaking..." : "Listening...") : (isConnecting ? "Connecting..." : "Assistant Ready")}
+                </span>
               </div>
             </div>
           </div>
@@ -262,17 +335,19 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
                 className={cn(
                   'w-full bg-slate-50 border border-slate-200 text-slate-900 px-5 py-3.5 pr-12 rounded-none text-sm font-medium',
                   'focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all',
-                  isListening && 'border-emerald-500 ring-4 ring-emerald-500/10'
+                  isConnected && 'border-emerald-500 ring-4 ring-emerald-500/10'
                 )}
               />
               <button
                 onClick={startVoiceInput}
+                disabled={isConnecting}
                 className={cn(
                   'absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-none transition-all',
-                  isListening ? 'bg-emerald-100 text-emerald-600 scale-110' : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100'
+                  isConnected ? 'bg-emerald-100 text-emerald-600 animate-pulse scale-110' : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100 disabled:opacity-50'
                 )}
+                title={isConnected ? "End Voice Chat" : "Start Voice Chat"}
               >
-                <Mic className="w-5 h-5" />
+                {isConnected || isConnecting ? <PhoneOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
               </button>
             </div>
             <MatrixButton

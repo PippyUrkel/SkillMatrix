@@ -17,6 +17,7 @@ interface DashboardStore {
   // Courses
   courses: Course[];
   activeCourse: Course | null;
+  activeVideoUrl: string | null;
 
   // Jobs
   jobs: Job[];
@@ -48,6 +49,7 @@ interface DashboardStore {
   generateCurriculum: (topic: string, constraints: any) => Promise<void>;
   sendChatMessage: (content: string) => Promise<void>;
   setActiveCourse: (course: Course | null) => void;
+  setActiveVideoUrl: (url: string | null) => void;
   updateCourseProgress: (courseId: string, progress: number) => void;
   markLessonComplete: (courseId: string, lessonId: string) => void;
   completeCourse: (courseId: string) => void;
@@ -69,6 +71,7 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   skillCategories: [],
   courses: [],
   activeCourse: null,
+  activeVideoUrl: null,
   jobs: [],
   savedJobs: [],
   chatMessages: [
@@ -399,6 +402,7 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   },
 
   setActiveCourse: (course) => set({ activeCourse: course }),
+  setActiveVideoUrl: (url) => set({ activeVideoUrl: url }),
 
   updateCourseProgress: (courseId, progress) =>
     set((state) => ({
