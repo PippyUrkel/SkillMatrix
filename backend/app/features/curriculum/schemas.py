@@ -52,6 +52,12 @@ class CurriculumRequest(BaseModel):
         max_length=200,
         description="The main topic for the course",
     )
+    pace_adjustment: float = Field(
+        default=1.0,
+        ge=0.5,
+        le=2.0,
+        description="FL-predicted pace factor: <1.0 = accelerate, >1.0 = slow down",
+    )
 
 
 # ---------- Response Models ----------

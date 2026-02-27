@@ -171,6 +171,34 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
     set({ isLoadingCurriculum: true });
     try {
       const user = useUserStore.getState().user;
+
+      // ── FL Integration: Predict learning pace ──────────
+      let paceAdjustment = 1.0;
+      let brain: InstanceType<typeof import('@/features/adaptive/AdaptiveBrain').AdaptiveBrain> | null = null;
+
+      try {
+        const { AdaptiveBrain } = await import('@/features/adaptive/AdaptiveBrain');
+        const { usePerformanceStore } = await import('@/features/adaptive/performanceStore');
+        const signals = usePerformanceStore.getState().getSignalVector();
+
+        // Fetch global weights from FL server
+        try {
+          const globalModel = await api.get<any>('/api/fl/model');
+          brain = new AdaptiveBrain(globalModel.weights);
+        } catch {
+          // FL server unavailable — use default weights
+          brain = new AdaptiveBrain();
+        }
+
+        const prediction = brain.predict(signals);
+        paceAdjustment = prediction.pace_factor;
+        console.log(`[FL] Pace prediction: ${paceAdjustment} (${prediction.recommendation})`);
+      } catch (e) {
+        // Graceful degradation — proceed with default pace
+        console.warn('[FL] AdaptiveBrain unavailable, using default pace:', e);
+      }
+      // ── End FL Integration ─────────────────────────────
+
       const response = await api.post<any>('/api/curriculum/generate', {
         course_topic: topic,
         user_profile: {
@@ -181,7 +209,8 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
         constraints: {
           target_course_duration_days: constraints.durationDays || 7,
           daily_time_minutes: constraints.dailyMinutes || 60,
-        }
+        },
+        pace_adjustment: paceAdjustment,
       });
 
       const mappedCourse: Course = {
@@ -222,6 +251,25 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       } catch {
         // Non-critical — course is still usable even if save fails
       }
+
+      // ── FL Integration: Submit weight deltas ──────────
+      if (brain) {
+        try {
+          const { usePerformanceStore } = await import('@/features/adaptive/performanceStore');
+          const sampleCount = usePerformanceStore.getState().sampleCount;
+          if (sampleCount > 0) {
+            const delta = brain.getWeightDelta();
+            await api.post('/api/fl/updates', {
+              delta,
+              sample_count: sampleCount,
+            });
+            console.log('[FL] Weight update submitted successfully');
+          }
+        } catch (e) {
+          console.warn('[FL] Failed to submit weight update:', e);
+        }
+      }
+      // ── End FL Integration ─────────────────────────────
     } catch (error) {
       set({ isLoadingCurriculum: false });
       console.error('Failed to generate curriculum:', error);

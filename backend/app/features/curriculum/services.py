@@ -180,14 +180,44 @@ class CurriculumService:
         return self._fallback_module_plan(request)
 
     def _build_planning_prompt(self, request: CurriculumRequest) -> str:
+        pace = request.pace_adjustment
+
+        # Dynamically scale module count by pace factor
+        base_modules = request.constraints.target_course_duration_days
+        adjusted_modules = max(1, round(base_modules * pace))
+
+        # Build pace instruction for the LLM
+        if pace <= 0.8:
+            pace_instruction = (
+                "PACE: ACCELERATED — The learner is performing well. "
+                "Condense foundational content, skip introductory modules, "
+                "and move quickly to intermediate/advanced topics. "
+                "Combine related concepts into single modules where possible."
+            )
+        elif pace >= 1.2:
+            pace_instruction = (
+                "PACE: EXTENDED — The learner needs more time to absorb concepts. "
+                "Break complex topics into smaller, incremental steps. "
+                "Add extra introductory and review modules. "
+                "Include more practice-oriented content before advancing."
+            )
+        else:
+            pace_instruction = (
+                "PACE: NORMAL — Maintain a standard learning progression "
+                "with balanced theory and practice."
+            )
+
         return f"""You are an expert curriculum designer. Create a structured course plan.
 
 COURSE TOPIC: {request.course_topic}
 STUDENT LEVEL: {request.user_profile.current_level}
 WEAK SKILLS (focus on these): {', '.join(request.user_profile.weak_subskills) or 'None specified'}
 STRONG SKILLS (skip or review briefly): {', '.join(request.user_profile.strong_subskills) or 'None specified'}
-TOTAL MODULES: {request.constraints.target_course_duration_days}
+TOTAL MODULES: {adjusted_modules}
 DAILY TIME BUDGET: {request.constraints.daily_time_minutes} minutes
+PACE FACTOR: {pace}
+
+{pace_instruction}
 
 RULES:
 - Order modules from foundational to advanced
@@ -205,12 +235,16 @@ Example:
 
     def _parse_module_plan(self, text: str) -> list[dict]:
         """Extract JSON array from LLM response."""
+        # Strip <think> tags and their contents
+        cleaned = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
         # Strip markdown code fences if present
-        cleaned = re.sub(r"```(?:json)?\s*", "", text).strip().rstrip("`")
+        cleaned = re.sub(r"```(?:json)?\s*", "", cleaned).strip().rstrip("`")
         # Try to find a JSON array in the response
         match = re.search(r"\[.*\]", cleaned, re.DOTALL)
         if match:
             cleaned = match.group(0)
+        # Fix trailing commas
+        cleaned = re.sub(r",\s*([\]}])", r"\1", cleaned)
         try:
             data = json.loads(cleaned)
             if isinstance(data, list) and all(

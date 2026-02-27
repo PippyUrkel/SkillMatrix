@@ -46,6 +46,10 @@ venv/
 .Python
 *.egg-info/
 *.egg
+# FL artifacts
+global_model.pth
+# Reference project (archives)
+references/Asynchronus FL/
 
 #next related
 .gsd/
@@ -57,6 +61,12 @@ get-shit-done-for-antigravity/
 .DS_Store
 Desktop.ini
 
+# Misc
+*.local
+*.cpuprofile
+.eslintcache
+temp/
+.cache/
 # ─── Misc ───
 *.local
 *.cpuprofile
