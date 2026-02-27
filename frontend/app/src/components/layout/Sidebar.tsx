@@ -61,8 +61,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeItem, onNavigate }) => {
       )}>
         {!isSidebarCollapsed && (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-500 rounded-none flex items-center justify-center shadow-lg shadow-emerald-200">
-              <span className="text-white font-bold text-lg">S</span>
+            <div className="w-10 h-10 rounded-none border-2 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-brutal-yellow overflow-hidden">
+              <img src="/logo.png" alt="SkillMatrix Logo" className="w-full h-full object-cover" />
             </div>
             <div>
               <span className="text-slate-900 font-bold text-lg">SkillMatrix</span>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { HomePage } from '@/features/home';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { OnboardingWizard } from '@/features/onboarding';
 import { DashboardPage } from '@/features/dashboard';
@@ -16,6 +17,7 @@ import { Spinner } from '@/components/ui/spinner';
 import './App.css';
 
 type Page =
+  | 'home'
   | 'login'
   | 'onboarding'
   | 'dashboard'
@@ -27,7 +29,7 @@ type Page =
   | 'settings';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('login');
+  const [currentPage, setCurrentPage] = useState<Page>('home');
   const { isAuthenticated, fetchMe, isLoading, user } = useUserStore();
   useKeyboardShortcuts();
 
@@ -36,7 +38,7 @@ function App() {
   }, [fetchMe]);
 
   useEffect(() => {
-    if (isAuthenticated && currentPage === 'login') {
+    if (isAuthenticated && (currentPage === 'home' || currentPage === 'login')) {
       // If user has a target role, they probably finished onboarding
       if (user?.targetRole) {
         setCurrentPage('dashboard');
@@ -46,7 +48,7 @@ function App() {
     }
   }, [isAuthenticated, user, currentPage]);
 
-  const isDashboard = !['login', 'onboarding'].includes(currentPage);
+  const isDashboard = !['home', 'login', 'onboarding'].includes(currentPage);
 
   // Handle login — called by LoginPage after successful login or signup
   const handleLogin = (isNewUser?: boolean) => {
@@ -78,6 +80,8 @@ function App() {
   // Render current page
   const renderPage = () => {
     switch (currentPage) {
+      case 'home':
+        return <HomePage onGetStarted={() => setCurrentPage('login')} />;
       case 'login':
         return <LoginPage onLogin={handleLogin} />;
       case 'onboarding':
@@ -97,7 +101,7 @@ function App() {
       case 'settings':
         return <SettingsPage onNavigate={navigate} />;
       default:
-        return <LoginPage onLogin={handleLogin} />;
+        return <HomePage onGetStarted={() => setCurrentPage('login')} />;
     }
   };
 
