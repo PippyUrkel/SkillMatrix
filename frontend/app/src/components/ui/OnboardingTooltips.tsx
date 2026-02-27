@@ -73,7 +73,7 @@ export const OnboardingTooltips: React.FC = () => {
 
     return (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[90] flex items-center justify-center">
-            <div className="w-full max-w-sm bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+            <div className="w-full max-w-sm bg-white border border-slate-200 rounded-none shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-slate-50">
                     <span className="text-xs text-slate-400 font-medium">
@@ -89,7 +89,7 @@ export const OnboardingTooltips: React.FC = () => {
 
                 {/* Content */}
                 <div className="p-6 text-center">
-                    <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <div className="w-14 h-14 bg-emerald-50 rounded-none flex items-center justify-center mx-auto mb-4">
                         <Icon className="w-7 h-7 text-emerald-500" />
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
@@ -102,7 +102,7 @@ export const OnboardingTooltips: React.FC = () => {
                         <div
                             key={i}
                             className={cn(
-                                'w-2 h-2 rounded-full transition-all',
+                                'w-2 h-2 rounded-none transition-all',
                                 i === currentStep ? 'bg-emerald-500 w-6' : 'bg-slate-200'
                             )}
                         />
@@ -130,7 +130,7 @@ export const OnboardingTooltips: React.FC = () => {
                         </button>
                         <button
                             onClick={handleNext}
-                            className="flex items-center gap-1 px-4 py-1.5 bg-emerald-500 text-white text-sm font-medium rounded-lg hover:bg-emerald-600 transition-colors"
+                            className="flex items-center gap-1 px-4 py-1.5 bg-emerald-500 text-white text-sm font-medium rounded-none hover:bg-emerald-600 transition-colors"
                         >
                             {currentStep === steps.length - 1 ? "Let's go!" : 'Next'}
                             {currentStep < steps.length - 1 && <ChevronRight className="w-4 h-4" />}

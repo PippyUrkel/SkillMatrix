@@ -58,7 +58,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
         {/* Header (Simplified for panel) */}
         <div className="flex items-center justify-between p-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-emerald-500 rounded-none flex items-center justify-center">
               <Bot className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -67,7 +67,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
           </div>
           <button
             onClick={() => setChatOpen(false)}
-            className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg"
+            className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-none"
           >
             <X className="w-5 h-5" />
           </button>
@@ -90,7 +90,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
               )}
               <div
                 className={cn(
-                  'max-w-[90%] p-3 rounded-xl text-xs leading-relaxed',
+                  'max-w-[90%] p-3 rounded-none text-xs leading-relaxed',
                   message.role === 'assistant'
                     ? 'bg-white text-slate-700 border border-slate-100'
                     : 'bg-emerald-500 text-white shadow-sm'
@@ -117,12 +117,12 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Ask a question..."
-              className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-emerald-500"
+              className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-none text-xs focus:outline-none focus:border-emerald-500"
             />
             <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="p-2 bg-emerald-500 text-white rounded-xl disabled:opacity-50"
+              className="p-2 bg-emerald-500 text-white rounded-none disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
             </button>
@@ -140,7 +140,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
       <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50">
         <button
           onClick={() => setChatOpen(true)}
-          className="bg-emerald-500 text-white px-3 py-6 rounded-l-2xl shadow-xl flex flex-col items-center gap-2 hover:bg-emerald-600 transition-all hover:pr-4 group"
+          className="bg-emerald-500 text-white px-3 py-6 rounded-none shadow-xl flex flex-col items-center gap-2 hover:bg-emerald-600 transition-all hover:pr-4 group"
         >
           <Bot className="w-5 h-5" />
           <span className="[writing-mode:vertical-lr] rotate-180 text-xs font-bold uppercase tracking-widest">
@@ -164,20 +164,20 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-white">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-100">
+            <div className="w-10 h-10 bg-emerald-500 rounded-none flex items-center justify-center shadow-lg shadow-emerald-100">
               <Bot className="w-6 h-6 text-white" />
             </div>
             <div>
               <h4 className="text-slate-900 font-bold text-lg">SkillMatrix AI</h4>
               <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                <div className="w-2 h-2 bg-emerald-500 rounded-none animate-pulse" />
                 <span className="text-slate-500 text-xs font-medium">Assistant Online</span>
               </div>
             </div>
           </div>
           <button
             onClick={() => setChatOpen(false)}
-            className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all"
+            className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-none transition-all"
           >
             <X className="w-6 h-6" />
           </button>
@@ -194,16 +194,16 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
               )}
             >
               {message.role === 'assistant' && (
-                <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div className="w-8 h-8 bg-emerald-500 rounded-none flex items-center justify-center flex-shrink-0 shadow-sm">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
               )}
               <div
                 className={cn(
-                  'max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed',
+                  'max-w-[85%] p-4 rounded-none text-sm leading-relaxed',
                   message.role === 'assistant'
-                    ? 'bg-white text-slate-700 rounded-tl-none shadow-sm border border-slate-100'
-                    : 'bg-emerald-500 text-white rounded-tr-none shadow-md shadow-emerald-100'
+                    ? 'bg-white text-slate-700 rounded-none shadow-sm border border-slate-100'
+                    : 'bg-emerald-500 text-white rounded-none shadow-md shadow-emerald-100'
                 )}
               >
                 <p className="font-medium whitespace-pre-wrap">{message.content}</p>
@@ -215,7 +215,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
                 </p>
               </div>
               {message.role === 'user' && (
-                <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div className="w-8 h-8 bg-slate-900 rounded-none flex items-center justify-center flex-shrink-0 shadow-sm">
                   <span className="text-white text-[10px] font-black italic">YOU</span>
                 </div>
               )}
@@ -223,10 +223,10 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
           ))}
           {isLoadingChat && (
             <div className="flex gap-3">
-              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0 animate-pulse">
+              <div className="w-8 h-8 bg-emerald-500 rounded-none flex items-center justify-center flex-shrink-0 animate-pulse">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
-              <div className="bg-white text-slate-400 p-4 rounded-2xl text-xs border border-slate-100 italic">
+              <div className="bg-white text-slate-400 p-4 rounded-none text-xs border border-slate-100 italic">
                 AI is thinking...
               </div>
             </div>
@@ -241,7 +241,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
               <button
                 key={prompt}
                 onClick={() => setInput(prompt)}
-                className="px-4 py-2 bg-slate-50 text-slate-600 text-xs font-semibold rounded-xl border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
+                className="px-4 py-2 bg-slate-50 text-slate-600 text-xs font-semibold rounded-none border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
               >
                 {prompt}
               </button>
@@ -260,7 +260,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Type your question..."
                 className={cn(
-                  'w-full bg-slate-50 border border-slate-200 text-slate-900 px-5 py-3.5 pr-12 rounded-2xl text-sm font-medium',
+                  'w-full bg-slate-50 border border-slate-200 text-slate-900 px-5 py-3.5 pr-12 rounded-none text-sm font-medium',
                   'focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all',
                   isListening && 'border-emerald-500 ring-4 ring-emerald-500/10'
                 )}
@@ -268,7 +268,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
               <button
                 onClick={startVoiceInput}
                 className={cn(
-                  'absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all',
+                  'absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-none transition-all',
                   isListening ? 'bg-emerald-100 text-emerald-600 scale-110' : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100'
                 )}
               >
@@ -278,7 +278,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
             <MatrixButton
               onClick={handleSend}
               disabled={!input.trim()}
-              className="px-5 py-3.5 rounded-2xl"
+              className="px-5 py-3.5 rounded-none"
             >
               <Send className="w-5 h-5" />
             </MatrixButton>

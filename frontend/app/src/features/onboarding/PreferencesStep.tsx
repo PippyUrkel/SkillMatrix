@@ -39,10 +39,10 @@ export const PreferencesStep: React.FC = () => {
       {/* Preferences Grid */}
       <div className="space-y-4">
         {/* Voice Guided Learning */}
-        <div className="p-5 bg-white border border-slate-200 rounded-xl">
+        <div className="p-5 bg-white border border-slate-200 rounded-none">
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-purple-100 rounded-none flex items-center justify-center flex-shrink-0">
                 <Volume2 className="w-5 h-5 text-purple-600" />
               </div>
               <div>
@@ -55,13 +55,13 @@ export const PreferencesStep: React.FC = () => {
             <button
               onClick={toggleVoiceGuided}
               className={cn(
-                'relative w-12 h-6 rounded-full transition-colors',
+                'relative w-12 h-6 rounded-none transition-colors',
                 voiceGuided ? 'bg-emerald-500' : 'bg-slate-200'
               )}
             >
               <span
                 className={cn(
-                  'absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm',
+                  'absolute top-1 left-1 w-4 h-4 bg-white rounded-none transition-transform shadow-sm',
                   voiceGuided && 'translate-x-6'
                 )}
               />
@@ -70,9 +70,9 @@ export const PreferencesStep: React.FC = () => {
         </div>
 
         {/* Language Selector */}
-        <div className="p-5 bg-white border border-slate-200 rounded-xl">
+        <div className="p-5 bg-white border border-slate-200 rounded-none">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 bg-blue-100 rounded-none flex items-center justify-center flex-shrink-0">
               <Globe className="w-5 h-5 text-blue-600" />
             </div>
             <div>
@@ -89,7 +89,7 @@ export const PreferencesStep: React.FC = () => {
                 key={lang}
                 onClick={() => setLanguage(lang)}
                 className={cn(
-                  'px-3 py-2 rounded-lg text-sm font-medium transition-all',
+                  'px-3 py-2 rounded-none text-sm font-medium transition-all',
                   language === lang
                     ? 'bg-emerald-500 text-white'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -102,10 +102,10 @@ export const PreferencesStep: React.FC = () => {
         </div>
 
         {/* Auto Post to LinkedIn */}
-        <div className="p-5 bg-white border border-slate-200 rounded-xl">
+        <div className="p-5 bg-white border border-slate-200 rounded-none">
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-[#0077B5] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-[#0077B5] bg-opacity-10 rounded-none flex items-center justify-center flex-shrink-0">
                 <Share2 className="w-5 h-5 text-[#0077B5]" />
               </div>
               <div>
@@ -118,13 +118,13 @@ export const PreferencesStep: React.FC = () => {
             <button
               onClick={toggleAutoPostLinkedIn}
               className={cn(
-                'relative w-12 h-6 rounded-full transition-colors',
+                'relative w-12 h-6 rounded-none transition-colors',
                 autoPostLinkedIn ? 'bg-emerald-500' : 'bg-slate-200'
               )}
             >
               <span
                 className={cn(
-                  'absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm',
+                  'absolute top-1 left-1 w-4 h-4 bg-white rounded-none transition-transform shadow-sm',
                   autoPostLinkedIn && 'translate-x-6'
                 )}
               />
@@ -134,9 +134,9 @@ export const PreferencesStep: React.FC = () => {
       </div>
 
       {/* Summary */}
-      <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-xl">
+      <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-none">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 bg-emerald-500 rounded-none flex items-center justify-center flex-shrink-0">
             <Check className="w-4 h-4 text-white" />
           </div>
           <div>

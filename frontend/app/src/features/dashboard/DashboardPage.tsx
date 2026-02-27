@@ -49,7 +49,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       subtext: activeCourseTitle,
       icon: PlayCircle,
       trend: courses.length > 0 ? `${courses.length} course(s)` : 'Start a course',
-      color: 'bg-blue-500',
+      color: 'bg-brutal-blue text-black',
+      progress: undefined,
     },
     {
       label: 'Skills Mastered',
@@ -57,7 +58,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       subtext: totalSkillCount > 0 ? `out of ${totalSkillCount} total` : 'Analyze skills first',
       icon: Zap,
       progress: totalSkillCount > 0 ? Math.round((strongSkillCount / totalSkillCount) * 100) : 0,
-      color: 'bg-emerald-500',
+      color: 'bg-brutal-yellow text-black',
+      trend: undefined,
     },
     {
       label: 'Day Streak',
@@ -65,7 +67,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       subtext: 'days in a row',
       icon: TrendingUp,
       trend: (user?.streak || 0) > 0 ? 'Keep it up!' : 'Start learning!',
-      color: 'bg-orange-500',
+      color: 'bg-brutal-orange text-black',
+      progress: undefined,
     },
     {
       label: 'Job Matches',
@@ -73,7 +76,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       subtext: 'opportunities',
       icon: Briefcase,
       trend: jobs.length > 0 ? 'View matches' : 'Evaluate skills first',
-      color: 'bg-purple-500',
+      color: 'bg-brutal-pink text-black',
+      progress: undefined,
     },
   ];
 
@@ -94,21 +98,21 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   return (
     <DashboardLayout activeItem="dashboard" onNavigate={onNavigate} title="Dashboard">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-6 mb-8 text-white">
+      <div className="bg-brutal-purple border-2 border-black rounded-none p-6 mb-8 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-1">
+            <h2 className="text-2xl font-black mb-1">
               Welcome back, {user?.fullName.split(' ')[0]}!
             </h2>
-            <p className="text-emerald-100">You're making great progress on your learning journey</p>
+            <p className="text-black font-medium">You're making great progress on your learning journey</p>
           </div>
           <div className="hidden md:flex items-center gap-4">
             <div className="text-right">
-              <p className="text-sm text-emerald-100">Current Level</p>
-              <p className="text-2xl font-bold">{user?.level}</p>
+              <p className="text-sm text-black font-bold">Current Level</p>
+              <p className="text-2xl font-black">{user?.level}</p>
             </div>
-            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
-              <Target className="w-7 h-7 text-white" />
+            <div className="w-14 h-14 bg-brutal-yellow border-2 border-black rounded-none flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Target className="w-7 h-7 text-black" />
             </div>
           </div>
         </div>
@@ -124,8 +128,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
                 <p className="text-slate-400 text-xs mt-1">{stat.subtext}</p>
               </div>
-              <div className={`w-10 h-10 ${stat.color} bg-opacity-10 rounded-lg flex items-center justify-center`}>
-                <stat.icon className={`w-5 h-5 ${stat.color.replace('bg-', 'text-')}`} />
+              <div className={`w-10 h-10 ${stat.color} border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
+                <stat.icon className={`w-5 h-5 text-black`} />
               </div>
             </div>
 
@@ -215,7 +219,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               </ResponsiveContainer>
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center gap-3">
-                <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center">
+                <div className="w-14 h-14 bg-emerald-50 rounded-none flex items-center justify-center">
                   <Zap className="w-7 h-7 text-emerald-400" />
                 </div>
                 <div>
@@ -241,7 +245,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             {jobs.slice(0, 3).map((job) => (
               <div
                 key={job.id}
-                className="p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-emerald-300 transition-colors cursor-pointer"
+                className="p-4 bg-slate-50 rounded-none border border-slate-100 hover:border-emerald-300 transition-colors cursor-pointer"
                 onClick={() => onNavigate('/dashboard/jobs')}
               >
                 <div className="flex items-start justify-between mb-1">
@@ -294,7 +298,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           {courses.map((course) => (
             <div
               key={course.id}
-              className="min-w-[280px] bg-slate-50 rounded-xl border border-slate-100 overflow-hidden hover:border-emerald-300 transition-colors cursor-pointer"
+              className="min-w-[280px] bg-slate-50 rounded-none border border-slate-100 overflow-hidden hover:border-emerald-300 transition-colors cursor-pointer"
               onClick={() => onNavigate('/dashboard/learning')}
             >
               <img

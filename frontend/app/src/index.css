@@ -11,28 +11,34 @@
   --bg-surface-raised: #F1F5F9;
   --bg-card: #FFFFFF;
   
-  /* Accent Colors - Fresh Green */
-  --accent-primary: #10B981;
+  /* Accent Colors - Brutalist Palette */
+  --accent-primary: #10B981; /* Emerald */
   --accent-hover: #059669;
   --accent-light: #D1FAE5;
   --accent-dim: rgba(16, 185, 129, 0.15);
   --accent-glow: rgba(16, 185, 129, 0.2);
   
+  --brutal-yellow: #FFDE59;
+  --brutal-pink: #FF66C4;
+  --brutal-blue: #5CE1E6;
+  --brutal-purple: #CB6CE6;
+  --brutal-orange: #FF914D;
+  
   /* Border Colors */
-  --border-default: #E2E8F0;
-  --border-accent: rgba(16, 185, 129, 0.4);
+  --border-default: #000000;
+  --border-accent: #000000;
   
   /* Text Colors */
-  --text-primary: #0F172A;
-  --text-secondary: #64748B;
-  --text-muted: #94A3B8;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #666666;
   --text-inverse: #FFFFFF;
   
   /* Status Colors */
-  --error: #EF4444;
-  --warning: #F59E0B;
-  --success: #10B981;
-  --info: #3B82F6;
+  --error: #FF3131;
+  --warning: #FFDE59;
+  --success: #00BF63;
+  --info: #5CE1E6;
   
   /* Typography */
   --font-display: 'Inter', system-ui, sans-serif;
@@ -45,9 +51,9 @@
   --card-radius-mobile: 12px;
   
   /* Shadows */
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --card-shadow-hover: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --glow-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+  --card-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --card-shadow-hover: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+  --glow-shadow: none;
 }
 
 /* Base styles */

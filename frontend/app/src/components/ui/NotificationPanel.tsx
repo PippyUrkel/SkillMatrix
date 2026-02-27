@@ -57,12 +57,12 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ open, onCl
     return (
         <div
             ref={ref}
-            className="absolute right-0 top-full mt-2 w-96 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+            className="absolute right-0 top-full mt-2 w-96 bg-white border border-slate-200 rounded-none shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
         >
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
                 <h3 className="text-slate-900 font-semibold">Notifications</h3>
                 {unreadCount > 0 && (
-                    <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full font-medium">
+                    <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-none font-medium">
                         {unreadCount} new
                     </span>
                 )}
@@ -81,7 +81,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ open, onCl
                                 !notification.read && 'bg-emerald-50/30'
                             )}
                         >
-                            <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0', colorClass)}>
+                            <div className={cn('w-9 h-9 rounded-none flex items-center justify-center flex-shrink-0', colorClass)}>
                                 <Icon className="w-4 h-4" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -96,7 +96,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ open, onCl
                                     {notification.time}
                                 </span>
                                 {!notification.read && (
-                                    <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                                    <div className="w-2 h-2 bg-emerald-500 rounded-none" />
                                 )}
                             </div>
                         </div>

@@ -25,14 +25,14 @@ export const MatrixBadge: React.FC<MatrixBadgeProps> = ({
   };
 
   const sizeStyles = {
-    sm: 'px-2.5 py-0.5 text-xs',
-    md: 'px-3 py-1 text-sm',
+    sm: 'px-2 py-0.5 text-[10px]',
+    md: 'px-3 py-1 text-xs',
   };
 
   return (
     <span
       className={cn(
-        'inline-flex items-center font-medium rounded-full',
+        'inline-flex items-center font-bold rounded-none border-2 border-black uppercase tracking-wider',
         variantStyles[variant],
         sizeStyles[size],
         className

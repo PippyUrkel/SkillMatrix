@@ -77,7 +77,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
       return (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="relative mb-8">
-            <div className="w-20 h-20 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin" />
+            <div className="w-20 h-20 border-4 border-emerald-100 border-t-emerald-500 rounded-none animate-spin" />
             <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-emerald-500" />
           </div>
           <h3 className="text-2xl font-bold text-slate-900 mb-2">Setting up your profile...</h3>
@@ -107,7 +107,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-200 mb-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-500 rounded-none shadow-lg shadow-emerald-200 mb-4">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900">Let's set up your profile</h1>
@@ -122,7 +122,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         />
 
         {/* Step Content */}
-        <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div className="mt-8 bg-white rounded-none shadow-sm border border-slate-200 p-8">
           {renderStep()}
         </div>
 

@@ -79,7 +79,7 @@ export const ProfileSetupStep: React.FC = () => {
           value={targetRole}
           onChange={(e) => setTargetRole(e.target.value)}
           placeholder="e.g. Frontend Developer, Data Scientist, DevOps Engineer"
-          className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
+          className="w-full px-4 py-3 bg-white border border-slate-200 rounded-none text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
         />
       </div>
 
@@ -96,7 +96,7 @@ export const ProfileSetupStep: React.FC = () => {
                   value={localUsername}
                   onChange={(e) => setLocalUsername(e.target.value)}
                   placeholder="Enter your GitHub username"
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-none text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
                   disabled={isLoadingAnalysis}
                   onKeyDown={(e) => e.key === 'Enter' && handleGitHubConnect()}
                 />
@@ -112,7 +112,7 @@ export const ProfileSetupStep: React.FC = () => {
 
             {/* Error display */}
             {analysisError && (
-              <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-none text-sm text-red-700">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
                 <span>{analysisError}</span>
               </div>
@@ -121,26 +121,26 @@ export const ProfileSetupStep: React.FC = () => {
         ) : (
           <div className="space-y-4">
             {/* Connected state */}
-            <div className="flex items-center gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-              <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
+            <div className="flex items-center gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-none">
+              <div className="w-12 h-12 bg-emerald-500 rounded-none flex items-center justify-center">
                 <Github className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-slate-900">@{githubUsername}</h3>
                 <p className="text-sm text-emerald-600">Profile analyzed successfully</p>
               </div>
-              <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-emerald-500 rounded-none flex items-center justify-center">
                 <Check className="w-5 h-5 text-white" />
               </div>
             </div>
 
             {/* Show analysis result */}
             {analysisResult && (
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-none space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-slate-700">Skill Level</span>
                   <span className={cn(
-                    'text-xs px-2.5 py-1 rounded-full font-medium',
+                    'text-xs px-2.5 py-1 rounded-none font-medium',
                     analysisResult.current_level === 'advanced' && 'bg-purple-100 text-purple-700',
                     analysisResult.current_level === 'intermediate' && 'bg-blue-100 text-blue-700',
                     analysisResult.current_level === 'beginner' && 'bg-green-100 text-green-700',
@@ -152,7 +152,7 @@ export const ProfileSetupStep: React.FC = () => {
                     <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Strong</span>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
                       {analysisResult.strong_subskills.map((s) => (
-                        <span key={s} className="text-xs px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md">{s}</span>
+                        <span key={s} className="text-xs px-2 py-1 bg-emerald-100 text-emerald-700 rounded-none">{s}</span>
                       ))}
                     </div>
                   </div>
@@ -163,7 +163,7 @@ export const ProfileSetupStep: React.FC = () => {
                     <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Needs Work</span>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
                       {analysisResult.weak_subskills.map((s) => (
-                        <span key={s} className="text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded-md">{s}</span>
+                        <span key={s} className="text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded-none">{s}</span>
                       ))}
                     </div>
                   </div>
@@ -197,9 +197,9 @@ export const ProfileSetupStep: React.FC = () => {
         {!resume ? (
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-all"
+            className="border-2 border-dashed border-slate-300 rounded-none p-8 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-all"
           >
-            <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-14 h-14 bg-emerald-100 rounded-none flex items-center justify-center mx-auto mb-4">
               <Upload className="w-6 h-6 text-emerald-600" />
             </div>
             <p className="text-slate-700 font-medium mb-1">Click to upload your resume</p>
@@ -213,8 +213,8 @@ export const ProfileSetupStep: React.FC = () => {
             />
           </div>
         ) : (
-          <div className="flex items-center gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+          <div className="flex items-center gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-none">
+            <div className="w-12 h-12 bg-emerald-100 rounded-none flex items-center justify-center">
               <FileText className="w-6 h-6 text-emerald-600" />
             </div>
             <div className="flex-1">
@@ -226,7 +226,7 @@ export const ProfileSetupStep: React.FC = () => {
             </div>
             <button
               onClick={clearResume}
-              className="p-2 hover:bg-emerald-200 rounded-lg transition-colors"
+              className="p-2 hover:bg-emerald-200 rounded-none transition-colors"
             >
               <X className="w-5 h-5 text-slate-500" />
             </button>
@@ -238,7 +238,7 @@ export const ProfileSetupStep: React.FC = () => {
       <div
         onClick={connectLinkedIn}
         className={cn(
-          'relative p-5 rounded-xl border-2 cursor-pointer transition-all',
+          'relative p-5 rounded-none border-2 cursor-pointer transition-all',
           linkedInConnected
             ? 'border-emerald-500 bg-emerald-50'
             : 'border-slate-200 hover:border-emerald-400 hover:bg-slate-50'
@@ -246,7 +246,7 @@ export const ProfileSetupStep: React.FC = () => {
       >
         <div className="flex items-center gap-4">
           <div className={cn(
-            'w-12 h-12 rounded-xl flex items-center justify-center',
+            'w-12 h-12 rounded-none flex items-center justify-center',
             linkedInConnected ? 'bg-[#0077B5]' : 'bg-slate-100'
           )}>
             <Linkedin className={cn('w-6 h-6', linkedInConnected ? 'text-white' : 'text-[#0077B5]')} />
@@ -258,7 +258,7 @@ export const ProfileSetupStep: React.FC = () => {
             </p>
           </div>
           {linkedInConnected && (
-            <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-emerald-500 rounded-none flex items-center justify-center">
               <Check className="w-5 h-5 text-white" />
             </div>
           )}
@@ -266,8 +266,8 @@ export const ProfileSetupStep: React.FC = () => {
       </div>
 
       {/* Info Note */}
-      <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl">
-        <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+      <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-none">
+        <div className="w-5 h-5 bg-blue-500 rounded-none flex items-center justify-center flex-shrink-0 mt-0.5">
           <span className="text-white text-xs font-bold">i</span>
         </div>
         <p className="text-sm text-blue-700">

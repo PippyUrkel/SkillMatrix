@@ -54,7 +54,7 @@ export const StudyTimer: React.FC<StudyTimerProps> = ({ className }) => {
             <button
                 onClick={() => setIsOpen(true)}
                 className={cn(
-                    'fixed bottom-6 left-6 z-40 w-12 h-12 bg-white border border-slate-200 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl hover:border-emerald-300 transition-all group',
+                    'fixed bottom-6 left-6 z-40 w-12 h-12 bg-white border border-slate-200 rounded-none shadow-lg flex items-center justify-center hover:shadow-xl hover:border-emerald-300 transition-all group',
                     className
                 )}
                 title="Study Timer"
@@ -66,7 +66,7 @@ export const StudyTimer: React.FC<StudyTimerProps> = ({ className }) => {
 
     return (
         <div className={cn(
-            'fixed bottom-6 left-6 z-40 w-64 bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200',
+            'fixed bottom-6 left-6 z-40 w-64 bg-white border border-slate-200 rounded-none shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200',
             className
         )}>
             {/* Header */}
@@ -116,7 +116,7 @@ export const StudyTimer: React.FC<StudyTimerProps> = ({ className }) => {
                     <button
                         onClick={() => setIsRunning(!isRunning)}
                         className={cn(
-                            'w-10 h-10 rounded-full flex items-center justify-center transition-colors',
+                            'w-10 h-10 rounded-none flex items-center justify-center transition-colors',
                             isRunning
                                 ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                 : 'bg-emerald-500 text-white hover:bg-emerald-600'
@@ -126,7 +126,7 @@ export const StudyTimer: React.FC<StudyTimerProps> = ({ className }) => {
                     </button>
                     <button
                         onClick={reset}
-                        className="w-10 h-10 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                        className="w-10 h-10 rounded-none bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"
                     >
                         <RotateCcw className="w-4 h-4" />
                     </button>

@@ -37,9 +37,9 @@ export const MatrixProgress: React.FC<MatrixProgressProps> = ({
 
   return (
     <div className={cn('w-full', className)}>
-      <div className={cn('bg-slate-200 rounded-full overflow-hidden', sizeStyles[size])}>
+      <div className={cn('bg-slate-200 rounded-none overflow-hidden border-2 border-black', sizeStyles[size])}>
         <div
-          className={cn('h-full rounded-full transition-all duration-300', colorStyles[color], barClassName)}
+          className={cn('h-full rounded-none transition-all duration-300', colorStyles[color], barClassName)}
           style={{ width: `${percentage}%` }}
         />
       </div>

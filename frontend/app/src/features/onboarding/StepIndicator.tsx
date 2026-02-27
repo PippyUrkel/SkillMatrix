@@ -27,7 +27,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
             <div className="flex flex-col items-center">
               <div
                 className={cn(
-                  'w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-200 border-2',
+                  'w-10 h-10 rounded-none flex items-center justify-center font-semibold text-sm transition-all duration-200 border-2',
                   isCompleted && 'bg-emerald-500 border-emerald-500 text-white',
                   isCurrent && 'bg-white border-emerald-500 text-emerald-500',
                   isFuture && 'bg-white border-slate-200 text-slate-400'

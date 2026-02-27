@@ -105,7 +105,7 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
         {/* Missing Skills */}
         <MatrixCard>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
+            <div className="w-3 h-3 rounded-none bg-red-500" />
             <h3 className="text-lg font-semibold text-slate-900">Missing Skills</h3>
             <MatrixBadge variant="error">{missingSkills.length}</MatrixBadge>
           </div>
@@ -114,10 +114,10 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
               <button
                 key={skill.id}
                 onClick={() => setSelectedSkill(skill.id)}
-                className="w-full p-3 bg-red-50 rounded-lg border border-red-100 hover:border-red-300 transition-colors text-left"
+                className="w-full p-3 bg-brutal-pink rounded-none border-2 border-black transition-all text-left shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 mb-3"
               >
-                <p className="text-slate-900 font-medium">{skill.name}</p>
-                <p className="text-red-500 text-sm">{skill.requiredLevel} required</p>
+                <p className="text-black font-black">{skill.name}</p>
+                <p className="text-black font-medium text-sm">{skill.requiredLevel} required</p>
               </button>
             ))}
           </div>
@@ -126,7 +126,7 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
         {/* Partial Skills */}
         <MatrixCard>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-3 h-3 rounded-full bg-amber-500" />
+            <div className="w-3 h-3 rounded-none bg-amber-500" />
             <h3 className="text-lg font-semibold text-slate-900">Partial Skills</h3>
             <MatrixBadge variant="warning">{partialSkills.length}</MatrixBadge>
           </div>
@@ -135,12 +135,10 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
               <button
                 key={skill.id}
                 onClick={() => setSelectedSkill(skill.id)}
-                className="w-full p-3 bg-amber-50 rounded-lg border border-amber-100 hover:border-amber-300 transition-colors text-left"
+                className="w-full p-3 bg-brutal-yellow rounded-none border-2 border-black transition-all text-left shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 mb-3"
               >
-                <p className="text-slate-900 font-medium">{skill.name}</p>
-                <p className="text-amber-600 text-sm">
-                  You: {skill.currentLevel} → Need: {skill.requiredLevel}
-                </p>
+                <p className="text-black font-black">{skill.name}</p>
+                <p className="text-black font-medium text-sm">Current: {skill.currentLevel} / Required: {skill.requiredLevel}</p>
               </button>
             ))}
           </div>
@@ -149,7 +147,7 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
         {/* Strong Skills */}
         <MatrixCard>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-3 h-3 rounded-full bg-emerald-500" />
+            <div className="w-3 h-3 rounded-none bg-emerald-500" />
             <h3 className="text-lg font-semibold text-slate-900">Strong Skills</h3>
             <MatrixBadge variant="success">{strongSkills.length}</MatrixBadge>
           </div>
@@ -157,10 +155,10 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
             {strongSkills.map((skill) => (
               <div
                 key={skill.id}
-                className="p-3 bg-emerald-50 rounded-lg border border-emerald-100"
+                className="p-3 bg-emerald-400 rounded-none border-2 border-black transition-all mb-3 text-left shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1"
               >
-                <p className="text-slate-900 font-medium">{skill.name}</p>
-                <p className="text-emerald-600 text-sm">{skill.currentLevel}</p>
+                <p className="text-black font-black">{skill.name}</p>
+                <p className="text-black font-medium text-sm">{skill.currentLevel}</p>
               </div>
             ))}
           </div>
@@ -177,10 +175,10 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
                 key={sort}
                 onClick={() => setSortBy(sort)}
                 className={cn(
-                  'px-3 py-1.5 rounded-lg text-sm capitalize transition-colors',
+                  'px-3 py-1.5 rounded-none border-2 border-black text-sm capitalize transition-all font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none',
                   sortBy === sort
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-slate-100 text-slate-500 hover:text-slate-900'
+                    ? 'bg-black text-white'
+                    : 'bg-white text-black hover:bg-black hover:text-white'
                 )}
               >
                 {sort}
@@ -252,13 +250,13 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
               <Tooltip
                 contentStyle={{
                   backgroundColor: '#FFFFFF',
-                  border: '1px solid #E2E8F0',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+                  border: '2px solid #000000',
+                  borderRadius: '0px',
+                  boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)',
                 }}
-                itemStyle={{ color: '#334155' }}
+                itemStyle={{ color: '#000000', fontWeight: 'bold' }}
               />
-              <Bar dataKey="demandScore" fill="#10B981" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="demandScore" fill="#FFDE59" stroke="#000000" strokeWidth={2} radius={[0, 0, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -271,11 +269,11 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
       {/* Skill Drawer (Modal) */}
       {selectedSkill && (
         <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex justify-end"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-end"
           onClick={() => setSelectedSkill(null)}
         >
           <div
-            className="w-full max-w-md bg-white border-l border-slate-200 h-full p-6 overflow-auto shadow-2xl"
+            className="w-full max-w-md bg-white border-l-4 border-black h-full p-6 overflow-auto shadow-[-8px_0px_0px_0px_rgba(0,0,0,1)] animate-in slide-in-from-right-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -295,46 +293,52 @@ export const SkillGapPage: React.FC<SkillGapPageProps> = ({ onNavigate }) => {
             </p>
 
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-emerald-300 transition-colors"
-                >
-                  <div className="flex gap-4">
-                    <div className="w-20 h-14 bg-slate-200 rounded-lg flex-shrink-0" />
-                    <div className="flex-1">
-                      <h4 className="text-slate-900 font-medium mb-1">
-                        {selectedSkill === '1'
-                          ? 'System Design Fundamentals'
-                          : selectedSkill === '2'
-                            ? 'API Security Best Practices'
-                            : 'Advanced Course'}{' '}
-                        Part {i}
-                      </h4>
-                      <p className="text-slate-500 text-sm mb-2">Tech Academy</p>
-                      <div className="flex items-center gap-2">
-                        <MatrixBadge variant="accent" size="sm">
-                          AI Score: {90 + i * 2}%
-                        </MatrixBadge>
-                        <span className="text-slate-400 text-xs">• {2 + i}h</span>
+              {[1, 2, 3].map((i) => {
+                const colors = ['bg-brutal-pink', 'bg-brutal-blue', 'bg-brutal-yellow'];
+                const cardColor = colors[i - 1];
+                return (
+                  <div
+                    key={i}
+                    className={`p-4 ${cardColor} rounded-none border-2 border-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1`}
+                  >
+                    <div className="flex gap-4">
+                      <div className="w-20 h-14 bg-black/10 rounded-none border-2 border-black flex-shrink-0" />
+                      <div className="flex-1">
+                        <h4 className="text-black font-black mb-1">
+                          {selectedSkill === '1'
+                            ? 'System Design Fundamentals'
+                            : selectedSkill === '2'
+                              ? 'API Security Best Practices'
+                              : 'Advanced Course'}{' '}
+                          Part {i}
+                        </h4>
+                        <p className="text-black font-medium text-sm mb-2">Tech Academy</p>
+                        <div className="flex items-center gap-2">
+                          <MatrixBadge variant="accent" size="sm">
+                            AI Score: {90 + i * 2}%
+                          </MatrixBadge>
+                          <span className="text-black font-bold text-xs">• {2 + i}h</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <MatrixButton
-                    variant="secondary"
-                    size="sm"
-                    className="w-full mt-3"
-                    onClick={() => onNavigate('/dashboard/learning')}
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Add to Learning Path
-                  </MatrixButton>
-                </div>
-              ))}
+                );
+              })}
             </div>
+            <MatrixButton
+              variant="secondary"
+              size="sm"
+              className="w-full mt-3"
+              onClick={() => onNavigate('/dashboard/learning')}
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Add to Learning Path
+            </MatrixButton>
           </div>
         </div>
       )}
     </DashboardLayout>
   );
 };
+
+export default SkillGapPage;

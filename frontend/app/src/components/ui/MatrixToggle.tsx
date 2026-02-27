@@ -32,13 +32,13 @@ export const MatrixToggle: React.FC<MatrixToggleProps> = ({
         type="button"
         onClick={() => onChange(!checked)}
         className={cn(
-          'relative w-12 h-6 rounded-full transition-colors duration-200',
+          'relative w-12 h-6 rounded-none transition-colors duration-200',
           checked ? 'bg-emerald-500' : 'bg-slate-300'
         )}
       >
         <span
           className={cn(
-            'absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-200',
+            'absolute top-1 left-1 w-4 h-4 bg-white rounded-none transition-transform duration-200',
             checked && 'translate-x-6'
           )}
         />

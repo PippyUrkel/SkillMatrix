@@ -51,17 +51,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeItem, onNavigate }) => {
 
   return (
     <aside className={cn(
-      'fixed left-0 top-0 h-full bg-white border-r border-slate-200 flex flex-col z-40 transition-all duration-300',
+      'fixed left-0 top-0 h-full bg-white border-r-2 border-black flex flex-col z-40 transition-all duration-300',
       isSidebarCollapsed ? 'w-20' : 'w-64'
     )}>
       {/* Logo & Toggle */}
       <div className={cn(
-        'p-6 border-b border-slate-100 flex items-center transition-all',
+        'p-6 border-b-2 border-black flex items-center transition-all',
         isSidebarCollapsed ? 'justify-center p-4' : 'justify-between'
       )}>
         {!isSidebarCollapsed && (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200">
+            <div className="w-10 h-10 bg-emerald-500 rounded-none flex items-center justify-center shadow-lg shadow-emerald-200">
               <span className="text-white font-bold text-lg">S</span>
             </div>
             <div>
@@ -74,7 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeItem, onNavigate }) => {
         <button
           onClick={toggleSidebar}
           className={cn(
-            'p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all',
+            'p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-none transition-all',
             isSidebarCollapsed && 'bg-slate-50 text-slate-900'
           )}
         >
@@ -94,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeItem, onNavigate }) => {
                   onClick={() => onNavigate(item.path)}
                   title={isSidebarCollapsed ? item.label : undefined}
                   className={cn(
-                    'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150',
+                    'w-full flex items-center gap-3 px-4 py-3 rounded-none text-sm font-medium transition-all duration-150',
                     isActive
                       ? 'bg-emerald-50 text-emerald-600'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50',
@@ -111,13 +111,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeItem, onNavigate }) => {
       </nav>
 
       {/* Bottom Section */}
-      <div className="p-4 border-t border-slate-100">
+      <div className="p-4 border-t-2 border-black">
         {/* Settings */}
         <button
           onClick={() => onNavigate('/dashboard/settings')}
           title={isSidebarCollapsed ? 'Settings' : undefined}
           className={cn(
-            'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 mb-2',
+            'w-full flex items-center gap-3 px-4 py-3 rounded-none text-sm font-medium transition-all duration-150 mb-2',
             activeItem === 'settings'
               ? 'bg-emerald-50 text-emerald-600'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50',
@@ -130,10 +130,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeItem, onNavigate }) => {
 
         {/* User Profile */}
         <div className={cn(
-          'flex items-center gap-3 px-3 py-3 mt-2 bg-slate-50 rounded-xl overflow-hidden transition-all',
+          'flex items-center gap-3 px-3 py-3 mt-2 bg-slate-50 rounded-none overflow-hidden transition-all',
           isSidebarCollapsed ? 'justify-center px-2' : ''
         )}>
-          <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-none flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-sm">
               {user ? getInitials(user.fullName) : 'U'}
             </span>

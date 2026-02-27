@@ -102,7 +102,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
             <div>
               <label className="block text-sm font-medium text-slate-500 mb-3">Profile Photo</label>
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-none bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
                   <span className="text-white text-2xl font-bold">
                     {formData.fullName.split(' ').map((n) => n[0]).join('')}
                   </span>
@@ -128,7 +128,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                 type="email"
                 value={user?.email}
                 disabled
-                className="w-full bg-slate-100 border border-slate-200 text-slate-400 px-4 py-3 rounded-lg cursor-not-allowed"
+                className="w-full bg-slate-100 border border-slate-200 text-slate-400 px-4 py-3 rounded-none cursor-not-allowed"
               />
               <p className="text-slate-400 text-xs mt-1">Email cannot be changed</p>
             </div>
@@ -140,7 +140,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                 <select
                   value={formData.targetRole}
                   onChange={(e) => setFormData({ ...formData, targetRole: e.target.value })}
-                  className="w-full bg-white border border-slate-200 text-slate-900 px-4 py-3 rounded-xl appearance-none focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-white border border-slate-200 text-slate-900 px-4 py-3 rounded-none appearance-none focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">Select a role</option>
                   {ROLES.map((role) => (
@@ -160,7 +160,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                 <select
                   value={formData.language}
                   onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                  className="w-full bg-white border border-slate-200 text-slate-900 px-4 py-3 rounded-xl appearance-none focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-white border border-slate-200 text-slate-900 px-4 py-3 rounded-none appearance-none focus:outline-none focus:border-emerald-500"
                 >
                   {LANGUAGES.map((lang) => (
                     <option key={lang} value={lang}>
@@ -180,7 +180,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 placeholder="Tell us about yourself..."
                 maxLength={250}
-                className="w-full bg-white border border-slate-200 text-slate-900 px-4 py-3 rounded-xl resize-none focus:outline-none focus:border-emerald-500 h-24"
+                className="w-full bg-white border border-slate-200 text-slate-900 px-4 py-3 rounded-none resize-none focus:outline-none focus:border-emerald-500 h-24"
               />
               <p className="text-slate-400 text-xs mt-1 text-right">
                 {formData.bio.length}/250
@@ -197,15 +197,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
         return (
           <div className="space-y-6">
             {/* GitHub */}
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-none border border-slate-200">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-slate-900 rounded-none flex items-center justify-center">
                   <Github className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h4 className="text-slate-900 font-medium">GitHub</h4>
                   <div className="flex items-center gap-2">
-                    <div className={cn('w-2 h-2 rounded-full', githubConnected ? 'bg-emerald-500' : 'bg-slate-400')} />
+                    <div className={cn('w-2 h-2 rounded-none', githubConnected ? 'bg-emerald-500' : 'bg-slate-400')} />
                     <span className="text-slate-500 text-sm">
                       {githubConnected ? 'Connected' : 'Not connected'}
                     </span>
@@ -222,15 +222,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
             </div>
 
             {/* LinkedIn */}
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-none border border-slate-200">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#0077B5] rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-[#0077B5] rounded-none flex items-center justify-center">
                   <Linkedin className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h4 className="text-slate-900 font-medium">LinkedIn</h4>
                   <div className="flex items-center gap-2">
-                    <div className={cn('w-2 h-2 rounded-full', linkedInConnected ? 'bg-emerald-500' : 'bg-slate-400')} />
+                    <div className={cn('w-2 h-2 rounded-none', linkedInConnected ? 'bg-emerald-500' : 'bg-slate-400')} />
                     <span className="text-slate-500 text-sm">
                       {linkedInConnected ? 'Connected' : 'Not connected'}
                     </span>
@@ -312,7 +312,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
 
       case 'danger':
         return (
-          <div className="p-6 bg-red-50 border border-red-200 rounded-xl">
+          <div className="p-6 bg-red-50 border border-red-200 rounded-none">
             <h4 className="text-red-600 font-semibold mb-2">Delete Account</h4>
             <p className="text-slate-600 text-sm mb-4">
               This action cannot be undone. All your data will be permanently deleted.
@@ -341,7 +341,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
-                    'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left',
+                    'w-full flex items-center gap-3 px-4 py-3 rounded-none text-sm font-medium transition-colors text-left',
                     activeTab === tab.id
                       ? 'bg-emerald-50 text-emerald-600'
                       : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
@@ -371,7 +371,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
           onClick={() => setShowDeleteModal(false)}
         >
           <div
-            className="bg-white border border-red-200 rounded-2xl shadow-2xl max-w-md w-full p-6"
+            className="bg-white border border-red-200 rounded-none shadow-2xl max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-xl font-bold text-red-600 mb-4">Delete Account</h3>

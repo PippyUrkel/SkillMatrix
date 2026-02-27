@@ -10,6 +10,13 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        brutal: {
+          yellow: "var(--brutal-yellow)",
+          pink: "var(--brutal-pink)",
+          blue: "var(--brutal-blue)",
+          purple: "var(--brutal-purple)",
+          orange: "var(--brutal-orange)",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

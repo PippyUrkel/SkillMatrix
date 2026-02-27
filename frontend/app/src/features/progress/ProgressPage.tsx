@@ -74,29 +74,29 @@ export const ProgressPage: React.FC<ProgressPageProps> = ({ onNavigate }) => {
       label: 'Courses Completed',
       value: completedCourses.length,
       icon: BookOpen,
-      color: '#10B981',
-      bg: '#10B98120',
+      color: '#000000',
+      bg: '#5CE1E6', // brutal-blue
     },
     {
       label: 'Skills Unlocked',
       value: strongSkills.length || skills.length,
       icon: Star,
-      color: '#F59E0B',
-      bg: '#F59E0B20',
+      color: '#000000',
+      bg: '#FFDE59', // brutal-yellow
     },
     {
       label: 'Day Streak',
       value: user?.streak || 0,
       icon: Flame,
-      color: '#EF4444',
-      bg: '#EF444420',
+      color: '#000000',
+      bg: '#FF914D', // brutal-orange
     },
     {
       label: 'Lessons Done',
       value: totalLessonsCompleted,
       icon: CheckCircle,
-      color: '#6366F1',
-      bg: '#6366F120',
+      color: '#000000',
+      bg: '#FF66C4', // brutal-pink
     },
   ];
 
@@ -227,8 +227,8 @@ Lessons: ${totalLessonsCompleted} ✅ | Skills: ${skills.length} 🧠
         <div className="flex flex-col md:flex-row items-center gap-8">
           {/* Avatar and Info */}
           <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-200">
-              <span className="text-white text-2xl font-bold">
+            <div className="w-20 h-20 rounded-none bg-brutal-pink border-2 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <span className="text-black text-2xl font-black">
                 {(user?.fullName || 'U').split(' ').map((n) => n[0]).join('').toUpperCase()}
               </span>
             </div>
@@ -243,10 +243,10 @@ Lessons: ${totalLessonsCompleted} ✅ | Skills: ${skills.length} 🧠
           <div className="flex-1 flex items-center justify-center gap-6">
             <div className="relative w-32 h-32">
               <svg className="w-full h-full -rotate-90">
-                <circle cx="64" cy="64" r="56" fill="none" stroke="#E2E8F0" strokeWidth="12" />
+                <circle cx="64" cy="64" r="56" fill="none" stroke="#000000" strokeWidth="12" />
                 <circle
                   cx="64" cy="64" r="56" fill="none"
-                  stroke="#10B981" strokeWidth="12" strokeLinecap="round"
+                  stroke="#FF66C4" strokeWidth="12" strokeLinecap="square"
                   strokeDasharray={`${(xpProgress / 100) * 351.86} 351.86`}
                   className="transition-all duration-700"
                 />
@@ -279,9 +279,9 @@ Lessons: ${totalLessonsCompleted} ✅ | Skills: ${skills.length} 🧠
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {stats.map((stat) => (
-          <MatrixCard key={stat.label} className="text-center hover:shadow-md transition-shadow">
+          <MatrixCard key={stat.label} className="text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
             <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
+              className="w-12 h-12 rounded-none border-2 border-black flex items-center justify-center mx-auto mb-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               style={{ backgroundColor: stat.bg }}
             >
               <stat.icon className="w-6 h-6" style={{ color: stat.color }} />
@@ -308,18 +308,18 @@ Lessons: ${totalLessonsCompleted} ✅ | Skills: ${skills.length} 🧠
                 <XAxis dataKey="week" stroke="#94A3B8" tick={{ fontSize: 11 }} />
                 <YAxis domain={[0, 100]} stroke="#94A3B8" tick={{ fontSize: 11 }} unit="%" />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E2E8F0', borderRadius: '12px' }}
-                  itemStyle={{ color: '#334155' }}
+                  contentStyle={{ backgroundColor: '#fff', border: '2px solid #000', borderRadius: '0px', boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)' }}
+                  itemStyle={{ color: '#000', fontWeight: 'bold' }}
                   formatter={(v: number) => [`${v}%`]}
                 />
-                <Line type="monotone" dataKey="overallScore" stroke="#10B981" strokeWidth={2.5} dot={{ r: 4, fill: '#10B981' }} name="Progress" />
-                <Line type="monotone" dataKey="targetRoleMatch" stroke="#6366F1" strokeWidth={2} strokeDasharray="4 4" dot={false} name="Target Match" />
+                <Line type="monotone" dataKey="overallScore" stroke="#00BF63" strokeWidth={3} dot={{ r: 4, fill: '#00BF63', stroke: '#000', strokeWidth: 2 }} name="Progress" />
+                <Line type="monotone" dataKey="targetRoleMatch" stroke="#CB6CE6" strokeWidth={3} strokeDasharray="4 4" dot={false} name="Target Match" />
               </LineChart>
             </ResponsiveContainer>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-40 gap-3 text-center">
-            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-emerald-50 rounded-none flex items-center justify-center">
               <TrendingUp className="w-6 h-6 text-emerald-400" />
             </div>
             <div>
@@ -340,7 +340,7 @@ Lessons: ${totalLessonsCompleted} ✅ | Skills: ${skills.length} 🧠
       <MatrixCard className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-slate-900">Achievements</h3>
-          <span className="text-sm text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+          <span className="text-sm text-slate-400 bg-slate-100 px-3 py-1 rounded-none">
             {unlockedCount} / {achievements.length}
           </span>
         </div>
@@ -350,7 +350,7 @@ Lessons: ${totalLessonsCompleted} ✅ | Skills: ${skills.length} 🧠
               key={achievement.id}
               onClick={() => handleAchievementClick(achievement)}
               className={cn(
-                'p-4 rounded-xl border text-center transition-all cursor-pointer',
+                'p-4 rounded-none border text-center transition-all cursor-pointer',
                 achievement.locked
                   ? 'bg-slate-50 border-slate-200 opacity-50'
                   : 'bg-gradient-to-b from-emerald-50 to-white border-emerald-200 hover:shadow-md hover:border-emerald-300 hover:-translate-y-0.5'
@@ -361,7 +361,7 @@ Lessons: ${totalLessonsCompleted} ✅ | Skills: ${skills.length} 🧠
                   {achievement.icon}
                 </div>
                 {achievement.locked && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full">
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-none">
                     <Lock className="w-5 h-5 text-slate-400" />
                   </div>
                 )}
@@ -387,7 +387,7 @@ Lessons: ${totalLessonsCompleted} ✅ | Skills: ${skills.length} 🧠
         <textarea
           value={linkedInPost || generateLinkedInPost()}
           onChange={(e) => setLinkedInPost(e.target.value)}
-          className="w-full h-32 bg-slate-50 border border-slate-200 text-slate-900 p-4 rounded-xl resize-none focus:outline-none focus:border-emerald-500 mb-4 text-sm"
+          className="w-full h-32 bg-slate-50 border border-slate-200 text-slate-900 p-4 rounded-none resize-none focus:outline-none focus:border-emerald-500 mb-4 text-sm"
         />
         <MatrixButton onClick={handlePostToLinkedIn}>
           <Linkedin className="w-4 h-4 mr-2" />

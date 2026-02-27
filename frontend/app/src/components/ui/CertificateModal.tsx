@@ -39,7 +39,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
             onClick={onClose}
         >
             <div
-                className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300"
+                className="w-full max-w-2xl bg-white rounded-none shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Close button */}
@@ -51,14 +51,14 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
 
                 {/* Certificate */}
                 <div className="px-12 pb-8">
-                    <div className="border-2 border-emerald-200 rounded-2xl p-10 bg-gradient-to-br from-emerald-50/50 to-white text-center relative overflow-hidden">
+                    <div className="border-2 border-emerald-200 rounded-none p-10 bg-gradient-to-br from-emerald-50/50 to-white text-center relative overflow-hidden">
                         {/* Decorative corners */}
-                        <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-emerald-300 rounded-tl-lg" />
-                        <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-emerald-300 rounded-tr-lg" />
-                        <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-emerald-300 rounded-bl-lg" />
-                        <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-emerald-300 rounded-br-lg" />
+                        <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-emerald-300 rounded-none" />
+                        <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-emerald-300 rounded-none" />
+                        <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-emerald-300 rounded-none" />
+                        <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-emerald-300 rounded-none" />
 
-                        <div className="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-200">
+                        <div className="w-14 h-14 bg-emerald-500 rounded-none flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-200">
                             <span className="text-white font-bold text-xl">S</span>
                         </div>
 
@@ -74,7 +74,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                         <p className="text-slate-500 text-sm mb-4">Skills gained:</p>
                         <div className="flex flex-wrap gap-2 justify-center mb-6">
                             {skills.map((skill) => (
-                                <span key={skill} className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+                                <span key={skill} className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-none text-xs font-medium">
                                     {skill}
                                 </span>
                             ))}

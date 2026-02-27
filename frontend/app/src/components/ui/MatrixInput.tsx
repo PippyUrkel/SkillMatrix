@@ -39,7 +39,7 @@ export const MatrixInput: React.FC<MatrixInputProps> = ({
         disabled={disabled}
         maxLength={maxLength}
         className={cn(
-          'w-full bg-[#050605] border border-[#1F1F1F] text-white px-4 py-3 rounded-lg',
+          'w-full bg-[#050605] border border-[#1F1F1F] text-white px-4 py-3 rounded-none',
           'placeholder:text-[#6B7280]',
           'focus:outline-none focus:border-[#2EE9A8] focus:ring-1 focus:ring-[rgba(46,233,168,0.3)]',
           'transition-all duration-200',

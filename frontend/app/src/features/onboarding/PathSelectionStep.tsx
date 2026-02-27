@@ -108,21 +108,21 @@ export const PathSelectionStep: React.FC = () => {
               key={path.id}
               onClick={() => setSelectedPath(path.id)}
               className={cn(
-                'relative p-5 rounded-xl border-2 cursor-pointer transition-all',
+                'relative p-5 rounded-none border-2 cursor-pointer transition-all',
                 isSelected
                   ? 'border-emerald-500 bg-emerald-50 shadow-md'
                   : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50'
               )}
             >
               <div className="flex items-start gap-4">
-                <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0', path.color)}>
+                <div className={cn('w-12 h-12 rounded-none flex items-center justify-center flex-shrink-0', path.color)}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-slate-900">{path.title}</h3>
                     <span className={cn(
-                      'text-xs px-2 py-0.5 rounded-full font-medium',
+                      'text-xs px-2 py-0.5 rounded-none font-medium',
                       path.difficulty === 'beginner' && 'bg-green-100 text-green-700',
                       path.difficulty === 'intermediate' && 'bg-yellow-100 text-yellow-700',
                       path.difficulty === 'advanced' && 'bg-red-100 text-red-700',
@@ -147,7 +147,7 @@ export const PathSelectionStep: React.FC = () => {
                     {path.skills.map((skill) => (
                       <span
                         key={skill}
-                        className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-md"
+                        className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-none"
                       >
                         {skill}
                       </span>
@@ -158,7 +158,7 @@ export const PathSelectionStep: React.FC = () => {
 
               {/* Selection Indicator */}
               {isSelected && (
-                <div className="absolute top-4 right-4 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                <div className="absolute top-4 right-4 w-6 h-6 bg-emerald-500 rounded-none flex items-center justify-center">
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -170,8 +170,8 @@ export const PathSelectionStep: React.FC = () => {
       </div>
 
       {/* Info Note */}
-      <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-xl">
-        <div className="w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+      <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-none">
+        <div className="w-5 h-5 bg-amber-500 rounded-none flex items-center justify-center flex-shrink-0 mt-0.5">
           <span className="text-white text-xs font-bold">!</span>
         </div>
         <p className="text-sm text-amber-700">

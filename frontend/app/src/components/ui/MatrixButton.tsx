@@ -27,13 +27,13 @@ export const MatrixButton: React.FC<MatrixButtonProps> = ({
   fullWidth = false,
   title,
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-none border-2 border-transparent transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-none';
 
   const variantStyles = {
-    primary: 'bg-emerald-500 text-white hover:bg-emerald-600 hover:shadow-lg hover:shadow-emerald-200',
-    secondary: 'border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50',
-    ghost: 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
-    danger: 'border-2 border-red-500 text-red-600 hover:bg-red-50',
+    primary: 'bg-emerald-500 border-black text-white hover:bg-emerald-400',
+    secondary: 'bg-white border-black text-emerald-600 hover:bg-emerald-50',
+    ghost: 'bg-transparent text-slate-800 hover:border-black hover:bg-slate-50',
+    danger: 'bg-red-500 border-black text-white hover:bg-red-400',
   };
 
   const sizeStyles = {

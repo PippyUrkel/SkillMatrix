@@ -125,7 +125,7 @@ export const QuizStep: React.FC = () => {
 
       {/* Score Display (when complete) */}
       {assessmentComplete && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-none text-center">
           <p className="text-emerald-700 font-medium">
             Quiz Complete! You scored {score}/{QUESTIONS.length}
           </p>
@@ -146,14 +146,14 @@ export const QuizStep: React.FC = () => {
             <div
               key={question.id}
               className={cn(
-                'p-5 rounded-xl border transition-all',
+                'p-5 rounded-none border transition-all',
                 qIndex === currentQuestion || hasAnswered
                   ? 'border-slate-200 bg-white'
                   : 'border-slate-100 bg-slate-50 opacity-60'
               )}
             >
               <div className="flex items-start gap-3 mb-4">
-                <span className="w-7 h-7 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                <span className="w-7 h-7 bg-emerald-100 text-emerald-600 rounded-none flex items-center justify-center text-sm font-semibold flex-shrink-0">
                   {question.id}
                 </span>
                 <h3 className="font-medium text-slate-900">{question.question}</h3>
@@ -166,7 +166,7 @@ export const QuizStep: React.FC = () => {
                     onClick={() => !hasAnswered && handleAnswer(question.id, optIndex)}
                     disabled={hasAnswered}
                     className={cn(
-                      'w-full p-3 rounded-lg text-left text-sm transition-all border',
+                      'w-full p-3 rounded-none text-left text-sm transition-all border',
                       showResult && optIndex === question.correctAnswer
                         ? 'bg-emerald-50 border-emerald-500 text-emerald-700'
                         : showResult && optIndex === assessmentAnswers[question.id - 1] && !isCorrect
@@ -192,7 +192,7 @@ export const QuizStep: React.FC = () => {
               {/* Explanation */}
               {showResult && (
                 <div className={cn(
-                  'mt-3 ml-10 p-3 rounded-lg text-sm',
+                  'mt-3 ml-10 p-3 rounded-none text-sm',
                   isCorrect ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
                 )}>
                   <div className="flex items-start gap-2">

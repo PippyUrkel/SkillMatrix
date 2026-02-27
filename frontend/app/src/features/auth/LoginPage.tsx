@@ -37,7 +37,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500 rounded-2xl shadow-lg shadow-emerald-200 mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500 rounded-none shadow-lg shadow-emerald-200 mb-4">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-2">SkillMatrix</h1>
@@ -63,7 +63,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full pl-4 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
+                  className="w-full pl-4 pr-4 py-3 bg-white border border-slate-200 rounded-none text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
                   required
                 />
               </div>
@@ -80,7 +80,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-none text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
                   required
                 />
               </div>
@@ -97,7 +97,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-none text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
                   required
                 />
               </div>
@@ -125,11 +125,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
           {/* Social Login */}
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+            <button className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-none hover:bg-slate-50 transition-colors">
               <Github className="w-5 h-5 text-slate-700" />
               <span className="text-sm font-medium text-slate-700">GitHub</span>
             </button>
-            <button className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+            <button className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-none hover:bg-slate-50 transition-colors">
               <Linkedin className="w-5 h-5 text-[#0077B5]" />
               <span className="text-sm font-medium text-slate-700">LinkedIn</span>
             </button>

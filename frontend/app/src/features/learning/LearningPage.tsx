@@ -74,7 +74,7 @@ const CourseLibrary: React.FC<{
                 <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 {course.status === 'completed' && (
-                  <div className="absolute top-3 right-3 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                  <div className="absolute top-3 right-3 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-none flex items-center gap-1">
                     <CheckCircle className="w-3 h-3" /> Done
                   </div>
                 )}
@@ -109,8 +109,8 @@ const CourseLibrary: React.FC<{
       </div>
     ) : (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="w-20 h-20 bg-emerald-100 rounded-3xl flex items-center justify-center mb-6">
-          <GraduationCap className="w-10 h-10 text-emerald-500" />
+        <div className="w-20 h-20 bg-brutal-yellow border-2 border-black rounded-none flex items-center justify-center mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <GraduationCap className="w-10 h-10 text-black" />
         </div>
         <h3 className="text-xl font-bold text-slate-900 mb-2">No courses yet</h3>
         <p className="text-slate-500 mb-6 max-w-sm">Generate your first AI-curated learning path tailored to your skill gaps.</p>
@@ -133,11 +133,11 @@ const GenerateModal: React.FC<{
   const [topic, setTopic] = useState(defaultTopic);
   return (
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in zoom-in-95">
+      <div className="bg-white border-4 border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-md p-6 animate-in zoom-in-95">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-slate-900">Generate New Course</h3>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors">
-            <X className="w-4 h-4 text-slate-500" />
+          <h3 className="text-lg font-black text-slate-900 uppercase">Generate New Course</h3>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center border-2 border-transparent rounded-none hover:border-black hover:bg-brutal-pink transition-all group">
+            <X className="w-4 h-4 text-slate-900 group-hover:text-black" />
           </button>
         </div>
         <p className="text-slate-500 text-sm mb-4">What do you want to learn? I'll build a progressive curriculum with curated YouTube resources.</p>
@@ -146,7 +146,7 @@ const GenerateModal: React.FC<{
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
           placeholder="e.g. System Design, Advanced React, Docker…"
-          className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all mb-4"
+          className="w-full border-2 border-black rounded-none px-4 py-3 text-slate-900 font-medium focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-brutal-blue/10 focus:bg-brutal-blue/20 transition-all mb-4"
           autoFocus
           onKeyDown={(e) => e.key === 'Enter' && topic.trim() && onGenerate(topic.trim())}
         />
@@ -382,7 +382,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
 
           {/* Video Player */}
           <MatrixCard className="flex-shrink-0 p-4" ref={videoRef}>
-            <div className={cn('bg-slate-900 rounded-xl overflow-hidden mb-4 relative', focusMode ? 'aspect-[21/9]' : 'aspect-video')}>
+            <div className={cn('bg-slate-900 rounded-none overflow-hidden mb-4 relative', focusMode ? 'aspect-[21/9]' : 'aspect-video')}>
               {(() => {
                 const url = getActiveVideoUrl();
                 const vid = url ? getYouTubeEmbedId(url) : null;
@@ -393,7 +393,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
                       title={currentCourse.title}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
-                      className="w-full h-full rounded-xl"
+                      className="w-full h-full rounded-none"
                     />
                   );
                 }
@@ -442,7 +442,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
                   className={cn('px-5 py-2.5 text-sm font-bold transition-all relative', activeTab === tab.id ? 'text-emerald-600' : 'text-slate-400 hover:text-slate-600')}
                 >
                   <div className="flex items-center gap-2"><tab.icon className="w-4 h-4" />{tab.label}</div>
-                  {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-500 rounded-full" />}
+                  {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-500 rounded-none" />}
                 </button>
               ))}
             </div>
@@ -469,17 +469,17 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
                     const answer = checkpointAnswers[cp.id];
                     const ok = answer === cp.correctAnswer;
                     return (
-                      <div key={cp.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                      <div key={cp.id} className="p-5 bg-slate-50 rounded-none border border-slate-100">
                         <h4 className="font-bold text-slate-900 mb-4">{cp.question}</h4>
                         <div className="space-y-3">
                           {cp.options.map((opt, idx) => (
                             <button key={idx} onClick={() => setCheckpointAnswers({ ...checkpointAnswers, [cp.id]: idx })}
-                              className={cn('w-full p-4 rounded-xl border text-sm font-medium transition-all text-left',
+                              className={cn('w-full p-4 rounded-none border text-sm font-medium transition-all text-left',
                                 answer === idx ? (ok ? 'bg-emerald-50 border-emerald-400 text-emerald-700' : 'bg-red-50 border-red-400 text-red-700') : 'bg-white border-slate-100 hover:border-emerald-200')}>{opt}</button>
                           ))}
                         </div>
                         {answer !== undefined && (
-                          <div className={cn('mt-4 p-4 rounded-xl text-sm', ok ? 'bg-emerald-100/50 text-emerald-700' : 'bg-red-100/50 text-red-700')}>
+                          <div className={cn('mt-4 p-4 rounded-none text-sm', ok ? 'bg-emerald-100/50 text-emerald-700' : 'bg-red-100/50 text-red-700')}>
                             <p className="font-bold mb-1">{ok ? 'Correct!' : 'Not quite right'}</p>
                             {!ok && <p className="text-slate-600">{cp.explanation}</p>}
                           </div>
@@ -495,10 +495,10 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
               {activeTab === 'notes' && (
                 <div className="h-full flex flex-col">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex bg-slate-100 p-1 rounded-lg">
+                    <div className="flex bg-slate-100 p-1 rounded-none">
                       {(['edit', 'preview'] as const).map((m) => (
                         <button key={m} onClick={() => setNotesMode(m)}
-                          className={cn('px-4 py-1.5 rounded-md text-xs font-bold transition-all capitalize', notesMode === m ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700')}>
+                          className={cn('px-4 py-1.5 rounded-none text-xs font-bold transition-all capitalize', notesMode === m ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700')}>
                           {m === 'edit' ? 'Write' : 'Preview'}
                         </button>
                       ))}
@@ -506,9 +506,9 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
                   </div>
                   {notesMode === 'edit' ? (
                     <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Take notes…"
-                      className="flex-1 w-full bg-slate-50 border border-slate-100 rounded-2xl p-6 text-slate-900 focus:outline-none focus:border-emerald-400 resize-none font-medium text-sm leading-relaxed" />
+                      className="flex-1 w-full bg-slate-50 border border-slate-100 rounded-none p-6 text-slate-900 focus:outline-none focus:border-emerald-400 resize-none font-medium text-sm leading-relaxed" />
                   ) : (
-                    <div className="flex-1 p-6 bg-slate-50 rounded-2xl border border-slate-100 overflow-y-auto">
+                    <div className="flex-1 p-6 bg-slate-50 rounded-none border border-slate-100 overflow-y-auto">
                       {notes ? <pre className="text-slate-700 whitespace-pre-wrap font-sans">{notes}</pre> : <p className="text-slate-400 text-center py-8">No notes yet.</p>}
                     </div>
                   )}
@@ -518,7 +518,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
           </MatrixCard>
 
           {/* Progress + Next button */}
-          <div className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl flex-shrink-0">
+          <div className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-none flex-shrink-0">
             <span className="text-slate-500 text-sm whitespace-nowrap">Progress</span>
             <MatrixProgress value={currentCourse.progress} className="flex-1" showLabel />
             <div className="flex items-center gap-2">
@@ -538,7 +538,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
 
         {/* ─── Right: Module Accordion ─── */}
         {!focusMode && (
-          <div className="w-[360px] flex-shrink-0 flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden">
+          <div className="w-[360px] flex-shrink-0 flex flex-col bg-white border border-slate-200 rounded-none overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex-shrink-0">
               <h3 className="font-bold text-slate-900 text-sm">Course Content</h3>
               <p className="text-xs text-slate-400 mt-1">
@@ -591,7 +591,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
                                 isActive && 'bg-emerald-50/60 border-l-2 border-l-emerald-500'
                               )}
                             >
-                              <div className={cn('w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0', lesson.completed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300')}>
+                              <div className={cn('w-5 h-5 rounded-none border-2 flex items-center justify-center flex-shrink-0', lesson.completed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300')}>
                                 {lesson.completed && (
                                   <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -619,14 +619,14 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
               <div className="space-y-2">
                 {courses.map((course) => (
                   <button key={course.id} onClick={() => handleSelectCourse(course.id)}
-                    className={cn('w-full flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors text-left', course.id === currentCourse.id && 'bg-emerald-50')}>
+                    className={cn('w-full flex items-center gap-3 p-2 rounded-none hover:bg-slate-50 transition-colors text-left', course.id === currentCourse.id && 'bg-emerald-50')}>
                     <img src={course.thumbnail} alt="" className="w-10 h-7 rounded object-cover flex-shrink-0" />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-medium text-slate-700 truncate">{course.title}</p>
                       <p className="text-[10px] text-slate-400">{course.duration}</p>
                     </div>
                     {course.status === 'completed' && <CheckCircle className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />}
-                    {course.id === currentCourse.id && <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />}
+                    {course.id === currentCourse.id && <div className="w-1.5 h-1.5 rounded-none bg-emerald-500 flex-shrink-0" />}
                   </button>
                 ))}
               </div>
@@ -636,7 +636,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
 
         {/* AI Assistant panel */}
         {isChatOpen && !focusMode && (
-          <div className="w-[340px] flex-shrink-0 border border-slate-200 rounded-2xl bg-white shadow-lg flex flex-col overflow-hidden">
+          <div className="w-[340px] flex-shrink-0 border border-slate-200 rounded-none bg-white shadow-lg flex flex-col overflow-hidden">
             <AIHelper variant="panel" />
           </div>
         )}
@@ -644,13 +644,13 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
 
       {/* Mini-player PiP */}
       {showMiniPlayer && !focusMode && (
-        <div className="fixed bottom-6 right-6 z-50 w-72 bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4">
+        <div className="fixed bottom-6 right-6 z-50 w-72 bg-white border border-slate-200 rounded-none shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4">
           <div className="relative">
             <img src={currentCourse.thumbnail} alt="" className="w-full h-20 object-cover" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer">
               <PlayCircle className="w-8 h-8 text-white/80" />
             </div>
-            <button onClick={() => setShowMiniPlayer(false)} className="absolute top-2 right-2 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70">
+            <button onClick={() => setShowMiniPlayer(false)} className="absolute top-2 right-2 w-6 h-6 bg-black/50 rounded-none flex items-center justify-center text-white hover:bg-black/70">
               <X className="w-3 h-3" />
             </button>
           </div>

@@ -94,7 +94,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ onNavigate }) =>
             onClick={() => { setOpen(false); setQuery(''); }}
         >
             <div
-                className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+                className="w-full max-w-lg bg-white border border-slate-200 rounded-none shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Search Input */}

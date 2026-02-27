@@ -87,7 +87,7 @@ ${userName}`;
     return (
       <DashboardLayout activeItem="jobs" onNavigate={onNavigate} title="Job Matching">
         <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-center max-w-lg mx-auto">
-          <div className="w-20 h-20 bg-purple-100 rounded-3xl flex items-center justify-center mb-6">
+          <div className="w-20 h-20 bg-purple-100 rounded-none flex items-center justify-center mb-6">
             <Briefcase className="w-10 h-10 text-purple-500" />
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mb-3">No Job Matches Yet</h2>
@@ -114,7 +114,7 @@ ${userName}`;
               placeholder="Role..."
               value={filters.role}
               onChange={(e) => setFilters({ ...filters, role: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-emerald-500"
+              className="w-full bg-slate-50 border border-slate-200 text-slate-900 pl-10 pr-4 py-2 rounded-none focus:outline-none focus:border-emerald-500"
             />
           </div>
 
@@ -125,7 +125,7 @@ ${userName}`;
               placeholder="Location..."
               value={filters.location}
               onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-emerald-500"
+              className="w-full bg-slate-50 border border-slate-200 text-slate-900 pl-10 pr-4 py-2 rounded-none focus:outline-none focus:border-emerald-500"
             />
           </div>
 
@@ -161,7 +161,7 @@ ${userName}`;
         <button
           onClick={() => setActiveTab('all')}
           className={cn(
-            'px-4 py-2 rounded-lg font-medium transition-colors',
+            'px-4 py-2 rounded-none font-medium transition-colors',
             activeTab === 'all'
               ? 'bg-emerald-500 text-white'
               : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
@@ -172,7 +172,7 @@ ${userName}`;
         <button
           onClick={() => setActiveTab('saved')}
           className={cn(
-            'px-4 py-2 rounded-lg font-medium transition-colors',
+            'px-4 py-2 rounded-none font-medium transition-colors',
             activeTab === 'saved'
               ? 'bg-emerald-500 text-white'
               : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
@@ -191,14 +191,14 @@ ${userName}`;
               key={job.id}
               onClick={() => setSelectedJob(job)}
               className={cn(
-                'p-4 rounded-xl border cursor-pointer transition-all',
+                'p-4 rounded-none border cursor-pointer transition-all',
                 selectedJob?.id === job.id
                   ? 'bg-emerald-50 border-emerald-300 shadow-sm'
                   : 'bg-white border-slate-200 hover:border-emerald-200 hover:shadow-sm'
               )}
             >
               <div className="flex items-start justify-between mb-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-none flex items-center justify-center">
                   <Building2 className="w-5 h-5 text-white" />
                 </div>
                 <button
@@ -206,7 +206,7 @@ ${userName}`;
                     e.stopPropagation();
                     toggleSaveJob(job.id);
                   }}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-slate-100 rounded-none transition-colors"
                 >
                   <Heart
                     className={cn(
@@ -324,7 +324,7 @@ ${userName}`;
           onClick={() => setShowCoverLetter(false)}
         >
           <div
-            className="bg-white border border-slate-200 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-auto"
+            className="bg-white border border-slate-200 rounded-none shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
@@ -336,7 +336,7 @@ ${userName}`;
             <div className="p-6">
               <textarea
                 defaultValue={generateCoverLetter()}
-                className="w-full h-64 bg-slate-50 border border-slate-200 text-slate-900 p-4 rounded-xl resize-none focus:outline-none focus:border-emerald-500"
+                className="w-full h-64 bg-slate-50 border border-slate-200 text-slate-900 p-4 rounded-none resize-none focus:outline-none focus:border-emerald-500"
               />
               <div className="flex gap-3 mt-4">
                 <MatrixButton variant="secondary" onClick={copyCoverLetter}>
@@ -372,7 +372,7 @@ ${userName}`;
             <div className="p-6 space-y-6">
               <div>
                 <h4 className="text-slate-900 font-semibold mb-3">Resume Highlights</h4>
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="p-4 bg-slate-50 rounded-none border border-slate-200">
                   <p className="text-slate-500 text-sm">Auto-extracted from your profile:</p>
                   <ul className="mt-2 space-y-1">
                     {selectedJob.matchedSkills.map((skill: string) => (
@@ -386,7 +386,7 @@ ${userName}`;
 
               <div>
                 <h4 className="text-slate-900 font-semibold mb-3">Suggested Edits</h4>
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="p-4 bg-slate-50 rounded-none border border-slate-200">
                   <p className="text-slate-500 text-sm mb-2">Add these skills to your resume:</p>
                   <div className="space-y-2">
                     {selectedJob.missingSkills.map((skill: string) => (

@@ -31,8 +31,8 @@ export const StreakToast: React.FC<StreakToastProps> = ({ streak, visible, onDis
                 show ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             )}
         >
-            <div className="flex items-center gap-3 bg-white border border-emerald-200 rounded-2xl px-5 py-4 shadow-xl shadow-emerald-100/40">
-                <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center animate-pulse">
+            <div className="flex items-center gap-3 bg-white border border-emerald-200 rounded-none px-5 py-4 shadow-xl shadow-emerald-100/40">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-none flex items-center justify-center animate-pulse">
                     <Flame className="w-5 h-5 text-white" />
                 </div>
                 <div>
