@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { HomePage } from '@/features/home';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { OnboardingWizard } from '@/features/onboarding';
 import { DashboardPage } from '@/features/dashboard';
@@ -16,6 +17,7 @@ import { Spinner } from '@/components/ui/spinner';
 import './App.css';
 
 type Page =
+  | 'home'
   | 'login'
   | 'onboarding'
   | 'dashboard'
@@ -27,16 +29,22 @@ type Page =
   | 'settings';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('login');
+  const [currentPage, setCurrentPage] = useState<Page>('home');
   const { isAuthenticated, fetchMe, isLoading, user } = useUserStore();
   useKeyboardShortcuts();
+
+  // Prevent useEffect from overriding explicit navigation from handleLogin
+  const skipAutoRedirect = useRef(false);
 
   useEffect(() => {
     fetchMe();
   }, [fetchMe]);
 
   useEffect(() => {
-    if (isAuthenticated && currentPage === 'login') {
+    // Skip if handleLogin already navigated explicitly
+    if (skipAutoRedirect.current) return;
+
+    if (isAuthenticated && (currentPage === 'login' || currentPage === 'home')) {
       // If user has a target role, they probably finished onboarding
       if (user?.targetRole) {
         setCurrentPage('dashboard');
@@ -46,11 +54,13 @@ function App() {
     }
   }, [isAuthenticated, user, currentPage]);
 
-  const isDashboard = !['login', 'onboarding'].includes(currentPage);
+  const isDashboard = !['home', 'login', 'onboarding'].includes(currentPage);
 
   // Handle login — called by LoginPage after successful login or signup
   const handleLogin = (isNewUser?: boolean) => {
-    // Refresh user state, then decide where to go
+    // Prevent the auto-redirect useEffect from racing with this explicit navigation
+    skipAutoRedirect.current = true;
+
     const currentUser = useUserStore.getState().user;
     const hasCompletedOnboarding =
       !!currentUser?.targetRole || localStorage.getItem('onboarding_complete') === 'true';
@@ -60,6 +70,9 @@ function App() {
     } else {
       setCurrentPage('dashboard');
     }
+
+    // Reset flag after a tick so future auth changes (e.g. token refresh) still work
+    setTimeout(() => { skipAutoRedirect.current = false; }, 100);
   };
 
   // Handle navigation
@@ -78,6 +91,8 @@ function App() {
   // Render current page
   const renderPage = () => {
     switch (currentPage) {
+      case 'home':
+        return <HomePage onGetStarted={() => setCurrentPage('login')} />;
       case 'login':
         return <LoginPage onLogin={handleLogin} />;
       case 'onboarding':
@@ -97,20 +112,20 @@ function App() {
       case 'settings':
         return <SettingsPage onNavigate={navigate} />;
       default:
-        return <LoginPage onLogin={handleLogin} />;
+        return <HomePage onGetStarted={() => setCurrentPage('login')} />;
     }
   };
 
   if (isLoading && !isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <Spinner className="w-8 h-8 text-emerald-500" />
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <Spinner className="w-8 h-8 text-black" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       {/* Main Content */}
       {renderPage()}
 
