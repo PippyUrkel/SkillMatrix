@@ -123,11 +123,23 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
         {/* Header (Simplified for panel) */}
         <div className="flex items-center justify-between p-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-emerald-500 rounded-none flex items-center justify-center">
+            <div className={cn(
+              "w-8 h-8 rounded-none flex items-center justify-center transition-colors",
+              isConnected ? (isAgentSpeaking ? "bg-emerald-500" : "bg-emerald-400") : "bg-emerald-500"
+            )}>
               <Bot className="w-5 h-5 text-white" />
             </div>
             <div>
               <h4 className="text-slate-900 font-bold text-sm">AI Assistant</h4>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <div className={cn(
+                  "w-1.5 h-1.5 rounded-none",
+                  isConnected ? "bg-emerald-500 animate-pulse" : (isConnecting ? "bg-yellow-400 animate-pulse" : "bg-slate-400")
+                )} />
+                <span className="text-slate-500 text-[10px] font-medium uppercase tracking-wider">
+                  {isConnected ? (isAgentSpeaking ? "Speaking..." : "Listening...") : (isConnecting ? "Connecting..." : "Ready")}
+                </span>
+              </div>
             </div>
           </div>
           <button
@@ -176,18 +188,35 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
         {/* Input */}
         <div className="p-4 bg-white border-t border-slate-100">
           <div className="flex gap-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Ask a question..."
-              className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-none text-xs focus:outline-none focus:border-emerald-500"
-            />
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                placeholder="Ask a question..."
+                className={cn(
+                  'w-full bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2.5 pr-10 rounded-none text-xs font-medium',
+                  'focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all',
+                  isConnected && 'border-emerald-500 ring-2 ring-emerald-500/20'
+                )}
+              />
+              <button
+                onClick={startVoiceInput}
+                disabled={isConnecting}
+                className={cn(
+                  'absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-none transition-all',
+                  isConnected ? 'bg-emerald-100 text-emerald-600 animate-pulse' : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100 disabled:opacity-50'
+                )}
+                title={isConnected ? "End Voice Chat" : "Start Voice Chat"}
+              >
+                {isConnected || isConnecting ? <PhoneOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              </button>
+            </div>
             <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="p-2 bg-emerald-500 text-white rounded-none disabled:opacity-50"
+              className="px-3 py-2.5 bg-emerald-500 text-white rounded-none disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
             </button>
