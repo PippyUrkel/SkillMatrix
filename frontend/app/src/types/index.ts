@@ -104,14 +104,15 @@ export interface Job {
   title: string;
   company: string;
   location: string;
-  type: 'remote' | 'onsite' | 'hybrid';
+  type: string;
   description: string;
   fitScore: number;
   matchedSkills: string[];
   missingSkills: string[];
   experienceLevel: string;
-  source: 'linkedin' | 'indeed' | 'glassdoor';
+  source: string;
   saved: boolean;
+  url?: string;
 }
 
 // AI Helper Types

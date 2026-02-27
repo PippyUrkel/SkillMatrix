@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     onet_password: str = ""
 
     # LLM
+    ollama_endpoint: str = "http://localhost:11434"
     ollama_model: str = "alibayram/smollm3"
 
     # Federated Learning
