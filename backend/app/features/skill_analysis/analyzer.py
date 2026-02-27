@@ -2,6 +2,8 @@ import json
 import re
 import logging
 
+from json_repair import repair_json
+
 from app.utils.llm import generate_text
 from app.features.skill_analysis.schemas import (
     DataSource,
@@ -68,22 +70,47 @@ class SkillAnalyzer:
         """Extract structured JSON from LLM response."""
         # Strip <think> tags and their contents
         cleaned = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
-        
+
         # Strip markdown fences
         cleaned = re.sub(r"```(?:json)?\s*", "", cleaned).strip().rstrip("`")
 
-        # Try to find a JSON object in the response
-        match = re.search(r"\{.*\}", cleaned, re.DOTALL)
-        if match:
-            cleaned = match.group(0)
+        # Extract the outermost JSON object — find first { and matching last }
+        start = cleaned.find("{")
+        end = cleaned.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            cleaned = cleaned[start : end + 1]
 
         # Fix common trailing comma issues before closing brace/bracket
         cleaned = re.sub(r",\s*([\]}])", r"\1", cleaned)
 
+        data = None
+        # 1. Try strict JSON parse first
         try:
             data = json.loads(cleaned)
         except json.JSONDecodeError as e:
-            logger.warning("Failed to parse LLM response as JSON — using fallback: %s", e)
+            logger.warning("Strict JSON parse failed (%s), attempting repair...", e)
+            # 2. Fall back to json_repair for common LLM quirks
+            try:
+                repaired = repair_json(cleaned, return_objects=True)
+                if isinstance(repaired, dict):
+                    data = repaired
+                elif isinstance(repaired, list):
+                    # json_repair sometimes wraps in a list when extra text follows
+                    dict_items = [item for item in repaired if isinstance(item, dict)]
+                    if dict_items:
+                        data = dict_items[0]
+                        logger.warning("json_repair returned list — using first dict element")
+                    else:
+                        logger.warning("json_repair list contained no dicts: %s", repaired)
+                else:
+                    logger.warning("json_repair returned unexpected type: %s", type(repaired))
+            except Exception as repair_err:
+                logger.warning("json_repair also failed: %s", repair_err)
+
+        if data is None:
+            logger.error(
+                "Could not parse LLM JSON after repair — using fallback\nRaw text: %.300s", cleaned
+            )
             return self._fallback_report(source, target_role)
 
         # Build skill details
@@ -200,27 +227,21 @@ PROFILE TEXT:
 """
 
     def _common_instructions(self) -> str:
-        return """INSTRUCTIONS:
-1. Extract ALL relevant technical and professional skills mentioned or implied.
-2. Score each skill's proficiency from 0.0 to 1.0 based on:
-   - Usage frequency / depth of experience evident
-   - Project complexity
-   - Recency of usage
-   - Breadth vs depth
-3. Classify overall level as "beginner", "intermediate", or "advanced".
-4. Provide a confidence_score (0.0-1.0) for how reliable this analysis is given the data quality.
-5. For each skill, provide brief evidence justifying the score.
+        return """TASK: Extract skills and assess proficiency for the TARGET ROLE.
 
-Return ONLY a valid JSON object (no markdown fences). Format:
+Rules:
+- Score each skill 0.0 (none) to 1.0 (expert) based on evidence in the data.
+- Classify overall level: "beginner", "intermediate", or "advanced".
+- confidence_score: how reliable is this assessment (0.0-1.0).
+
+CRITICAL: Reply with ONLY the JSON below. No explanation, no markdown fences, no extra text.
+
 {
-  "current_level": "beginner | intermediate | advanced",
-  "confidence_score": 0.0-1.0,
+  "current_level": "beginner",
+  "confidence_score": 0.7,
   "skills": [
-    {
-      "name": "Skill Name",
-      "proficiency_score": 0.0-1.0,
-      "evidence": "Brief justification"
-    }
+    {"name": "Python", "proficiency_score": 0.8, "evidence": "Multiple Python repos"},
+    {"name": "Git", "proficiency_score": 0.6, "evidence": "Active GitHub usage"}
   ]
 }"""
 
