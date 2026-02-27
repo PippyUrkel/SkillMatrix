@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
 
-from app.databases.supabase_client import get_supabase_client
+from app.databases.appwrite_client import get_appwrite_client
 from app.features.auth.services import AuthService
 from app.middleware.auth_middleware import get_current_user
 
@@ -29,7 +29,7 @@ class UserResponse(BaseModel):
 # ---------- Dependencies ----------
 
 def get_auth_service() -> AuthService:
-    client = get_supabase_client()
+    client = get_appwrite_client()
     return AuthService(client)
 
 

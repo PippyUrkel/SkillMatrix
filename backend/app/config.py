@@ -3,10 +3,13 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    # Supabase
-    supabase_url: str
-    supabase_key: str
-    supabase_service_key: str
+    # Appwrite
+    appwrite_endpoint: str
+    appwrite_project_id: str
+    appwrite_api_key: str
+    appwrite_database_id: str
+    appwrite_profiles_collection_id: str
+    appwrite_skills_collection_id: str
 
     # JWT
     algorithm: str = "HS256"

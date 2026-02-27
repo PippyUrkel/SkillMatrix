@@ -19,7 +19,7 @@ KNOWN_SKILLS = {
     "jenkins", "github actions", "ci/cd", "nginx", "linux", "git",
     # Databases
     "postgresql", "mysql", "mongodb", "redis", "elasticsearch", "sqlite",
-    "dynamodb", "firebase", "supabase", "cassandra", "neo4j",
+    "dynamodb", "firebase", "appwrite", "cassandra", "neo4j",
     # Concepts
     "machine learning", "deep learning", "nlp", "computer vision", "data science",
     "data engineering", "devops", "microservices", "rest api", "graphql",
