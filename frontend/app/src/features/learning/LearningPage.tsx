@@ -34,9 +34,12 @@ import {
   DollarSign,
   Trash2,
   AlertTriangle,
+  Brain,
 } from 'lucide-react';
 import { AIHelper } from '@/features/aihelper';
-import confetti from 'canvas-confetti';
+import { QuizGenerator } from '@/features/quiz';
+import { CertificateModal } from '@/features/certificates';
+import { LinkedInPostGenerator } from '@/features/linkedin';
 
 interface LearningPageProps {
   onNavigate: (path: string) => void;
@@ -483,6 +486,9 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
   const [showStreakToast, setShowStreakToast] = useState(false);
   const [selectedLessonUrl, setSelectedLessonUrl] = useState<string | null>(null);
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
+  const [showQuizModal, setShowQuizModal] = useState<string | null>(null);
+  const [showCertModal, setShowCertModal] = useState<string | null>(null);
+  const [showLinkedInModal, setShowLinkedInModal] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLDivElement>(null);
   const prevSidebarState = useRef(isSidebarCollapsed);
@@ -605,7 +611,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
     if (!activeCourse) return;
     completeCourse(activeCourse.id);
     addXP(150);
-    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#2EE9A8', '#00CC33', '#F2FFF8'] });
+    setShowCertModal(activeCourse.id);
   };
 
   const toggleModule = (id: string) => setExpandedModules((p) => ({ ...p, [id]: !p[id] }));
@@ -813,6 +819,23 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
                   }) : (
                     <div className="text-center py-12"><p className="text-slate-400">No checkpoints for this course yet.</p></div>
                   )}
+
+                  <div className="border-t-[3px] border-black pt-6 mt-6">
+                    <div className="bg-brutal-blue/10 border-[3px] border-black p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-white border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0_0_#000]">
+                          <Brain className="w-6 h-6 text-black" />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-lg uppercase tracking-wider mb-1">Knowledge Check</h4>
+                          <p className="text-sm font-medium text-black/70 mb-4">Want more practice? Generate an AI-powered quiz on {currentCourse.title} topics now.</p>
+                          <MatrixButton onClick={() => setShowQuizModal(currentCourse.title)}>
+                            Take Practice Quiz
+                          </MatrixButton>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -985,7 +1008,36 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
         </div>
       )}
 
-      <StreakToast streak={user?.streak || 1} visible={showStreakToast} onDismiss={() => setShowStreakToast(false)} />
+      {showStreakToast && (
+        <StreakToast streak={user?.streak || 1} visible={showStreakToast} onDismiss={() => setShowStreakToast(false)} />
+      )}
+
+      {showQuizModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <QuizGenerator topic={showQuizModal} onClose={() => setShowQuizModal(null)} />
+          </div>
+        </div>
+      )}
+
+      {showCertModal && activeCourse && (
+        <CertificateModal
+          courseId={showCertModal}
+          courseName={activeCourse.title}
+          onClose={() => {
+            setShowCertModal(null);
+            setShowLinkedInModal(activeCourse.title);
+          }}
+        />
+      )}
+
+      {showLinkedInModal && activeCourse && (
+        <LinkedInPostGenerator
+          courseName={showLinkedInModal}
+          skillsGained={activeCourse.modules.flatMap(m => m.topics || [])}
+          onClose={() => setShowLinkedInModal(null)}
+        />
+      )}
     </DashboardLayout>
   );
 };
