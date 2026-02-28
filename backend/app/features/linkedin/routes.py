@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends
-from ollama import Client
 import os
 import json
 from json_repair import repair_json
-from ...dependencies import get_current_user
-from ...config import get_settings
+from app.middleware.auth_middleware import get_current_user
+from app.config import get_settings
+from app.utils.llm import generate_text
 
-router = APIRouter(prefix="/linkedin", tags=["LinkedIn Integration"])
+router = APIRouter(prefix="/api/linkedin", tags=["LinkedIn Integration"])
 settings = get_settings()
 
 @router.post("/generate")
@@ -35,16 +35,14 @@ async def generate_linkedin_post(request: dict, user_id: str = Depends(get_curre
     """
 
     try:
-        client = Client(host=settings.OLLAMA_HOST)
-        response = client.generate(
-            model=settings.OLLAMA_MODEL,
-            prompt=prompt,
-        )
+        response_text = await generate_text(prompt, temperature=0.7)
+        if not response_text:
+            raise Exception("No response from Ollama")
         
         # Parse the output
         try:
-            parsed = json.loads(str(repair_json(response.response)))
-            content = parsed.get("post_content", response.response)
+            parsed = json.loads(str(repair_json(response_text)))
+            content = parsed.get("post_content", response_text)
             
             # Clean up potential markdown string artifacts
             if isinstance(content, str) and content.startswith("```json"):
@@ -55,7 +53,7 @@ async def generate_linkedin_post(request: dict, user_id: str = Depends(get_curre
         except json.JSONDecodeError:
             print("Failed to parse JSON for LinkedIn post. Falling back to raw response.")
             # If JSON parsing totally fails, just return the raw string and let the user edit it.
-            return {"post_content": response.response.strip()}
+            return {"post_content": response_text.strip()}
 
     except Exception as e:
         print(f"Error generating LinkedIn post with Ollama: {e}")

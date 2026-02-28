@@ -1,7 +1,7 @@
 import uuid
 import hashlib
 from fastapi import APIRouter, HTTPException, Depends
-from ...dependencies import get_current_user
+from app.middleware.auth_middleware import get_current_user
 from .schemas import MintCertificateRequest, MintCertificateResponse
 
 # In a real production app, you would initialize Web3 here:
@@ -9,7 +9,7 @@ from .schemas import MintCertificateRequest, MintCertificateResponse
 # w3 = Web3(Web3.HTTPProvider(settings.POLYGON_RPC_URL))
 # contract = w3.eth.contract(address=settings.CONTRACT_ADDRESS, abi=ABI)
 
-router = APIRouter(prefix="/certificates", tags=["Blockchain Certificates"])
+router = APIRouter(prefix="/api/certificates", tags=["Blockchain Certificates"])
 
 @router.post("/mint", response_model=MintCertificateResponse)
 async def mint_certificate(request: MintCertificateRequest, user_id: str = Depends(get_current_user)):
