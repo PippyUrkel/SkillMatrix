@@ -40,10 +40,19 @@ interface OnboardingStore extends OnboardingState {
   setLanguage: (lang: string) => void;
   toggleAutoPostLinkedIn: () => void;
   saveProfileToBackend: () => Promise<void>;
+  // Dynamic paths & quizzes
+  dynamicPaths: any[]; // Avoid complex type circular issues by keeping it robust, or infer from types. We'll use any[] for now or extend OnboardingState if needed
+  isPathsLoading: boolean;
+  fetchDynamicPaths: () => Promise<void>;
+
+  dynamicQuiz: any[];
+  isQuizLoading: boolean;
+  fetchDynamicQuiz: (topic: string) => Promise<void>;
+
   reset: () => void;
 }
 
-const initialState: OnboardingState = {
+const initialState = {
   currentStep: 1,
   resume: null,
   githubConnected: false,
@@ -55,6 +64,10 @@ const initialState: OnboardingState = {
   language: 'English',
   autoPostLinkedIn: false,
   riasecScores: null,
+  dynamicPaths: [] as any[],
+  isPathsLoading: false,
+  dynamicQuiz: [] as any[],
+  isQuizLoading: false,
 };
 
 export const useOnboardingStore = create<OnboardingStore>((set, get) => ({
@@ -155,6 +168,42 @@ export const useOnboardingStore = create<OnboardingStore>((set, get) => ({
       }
     } catch (error) {
       console.error('Failed to save profile to backend:', error);
+    }
+  },
+
+  fetchDynamicPaths: async () => {
+    const state = get();
+    if (state.dynamicPaths.length > 0) return; // already fetched
+
+    set({ isPathsLoading: true });
+    try {
+      // Collect basic skills out of the result
+      const skills = state.analysisResult?.all_skills?.map((s: any) => s.name) || [];
+      const res = await api.post<any>('/api/onboarding/career-paths', {
+        riasec_scores: state.riasecScores,
+        target_role: state.targetRole,
+        skills: skills
+      });
+      set({ dynamicPaths: res.paths || [], isPathsLoading: false });
+    } catch (error) {
+      console.error("Failed to fetch dynamic paths", error);
+      set({ isPathsLoading: false });
+    }
+  },
+
+  fetchDynamicQuiz: async (topic: string) => {
+    const state = get();
+    set({ isQuizLoading: true, assessmentComplete: false, assessmentAnswers: [] });
+    try {
+      const res = await api.post<any>('/api/quiz/generate', {
+        topic: `Foundational skills for ${topic}`,
+        num_questions: 5,
+        difficulty: 'beginner'
+      });
+      set({ dynamicQuiz: res.questions || [], isQuizLoading: false });
+    } catch (error) {
+      console.error("Failed to generate dynamic quiz", error);
+      set({ isQuizLoading: false });
     }
   },
 

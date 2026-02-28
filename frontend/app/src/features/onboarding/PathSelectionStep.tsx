@@ -1,117 +1,58 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useOnboardingStore } from '@/stores';
 import { cn } from '@/lib/utils';
-import { Clock, BookOpen, Code, Database, Server, Shield, Smartphone, TrendingUp, Sparkles } from 'lucide-react';
+import { Clock, BookOpen, Code, Database, Server, Shield, Smartphone, TrendingUp, Sparkles, Layout, Activity } from 'lucide-react';
 import type { RiasecScores } from '@/types';
 
-interface CareerPath {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  courses: number;
-  skills: string[];
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  icon: React.ElementType;
-  color: string;
-  riasec: (keyof RiasecScores)[];  // primary RIASEC codes for this career
-}
-
-const CAREER_PATHS: CareerPath[] = [
-  {
-    id: 'frontend',
-    title: 'Frontend Developer',
-    description: 'Master modern web development with React, TypeScript, and CSS frameworks. Build beautiful, responsive user interfaces.',
-    duration: '3 months',
-    courses: 8,
-    skills: ['React', 'TypeScript', 'CSS', 'Tailwind'],
-    difficulty: 'beginner',
-    icon: Code,
-    color: 'bg-brutal-blue',
-    riasec: ['I', 'A'],  // Investigative + Artistic
-  },
-  {
-    id: 'backend',
-    title: 'Backend Developer',
-    description: 'Learn server-side programming, APIs, databases, and system design. Build scalable backend systems.',
-    duration: '4 months',
-    courses: 10,
-    skills: ['Node.js', 'Python', 'SQL', 'System Design'],
-    difficulty: 'intermediate',
-    icon: Server,
-    color: 'bg-brutal-green',
-    riasec: ['I', 'C'],  // Investigative + Conventional
-  },
-  {
-    id: 'fullstack',
-    title: 'Full Stack Developer',
-    description: 'Become a versatile developer who can work on both frontend and backend. Complete end-to-end development.',
-    duration: '6 months',
-    courses: 15,
-    skills: ['React', 'Node.js', 'Database', 'DevOps'],
-    difficulty: 'advanced',
-    icon: TrendingUp,
-    color: 'bg-brutal-purple',
-    riasec: ['I', 'E'],  // Investigative + Enterprising
-  },
-  {
-    id: 'data',
-    title: 'Data Scientist',
-    description: 'Learn data analysis, machine learning, and statistical modeling. Extract insights from complex datasets.',
-    duration: '5 months',
-    courses: 12,
-    skills: ['Python', 'ML', 'Statistics', 'SQL'],
-    difficulty: 'intermediate',
-    icon: Database,
-    color: 'bg-brutal-orange',
-    riasec: ['I', 'C'],  // Investigative + Conventional
-  },
-  {
-    id: 'mobile',
-    title: 'Mobile Developer',
-    description: 'Build native and cross-platform mobile applications for iOS and Android devices.',
-    duration: '4 months',
-    courses: 9,
-    skills: ['React Native', 'Swift', 'Kotlin', 'Flutter'],
-    difficulty: 'intermediate',
-    icon: Smartphone,
-    color: 'bg-brutal-pink',
-    riasec: ['I', 'A'],  // Investigative + Artistic
-  },
-  {
-    id: 'security',
-    title: 'Security Engineer',
-    description: 'Learn cybersecurity fundamentals, ethical hacking, and secure coding practices.',
-    duration: '5 months',
-    courses: 11,
-    skills: ['Security', 'Networking', 'Cryptography', 'Penetration Testing'],
-    difficulty: 'advanced',
-    icon: Shield,
-    color: 'bg-red-500',
-    riasec: ['I', 'R'],  // Investigative + Realistic
-  },
-];
+// Map string icons from backend to actual Lucide components
+const IconMap: Record<string, React.ElementType> = {
+  Code,
+  Server,
+  Database,
+  Shield,
+  Smartphone,
+  TrendingUp,
+  Layout,
+  Activity,
+  BookOpen
+};
 
 /**
  * Calculate how well a career path matches the user's RIASEC interest profile.
  * Returns 0-100 where 100 = perfect match.
  */
-function calculateInterestMatch(path: CareerPath, scores: RiasecScores): number {
-  if (path.riasec.length === 0) return 50;
-  const total = path.riasec.reduce((sum, key) => sum + (scores[key] || 0), 0);
+function calculateInterestMatch(path: any, scores: RiasecScores): number {
+  if (!path.riasec || path.riasec.length === 0) return 50;
+  const total = path.riasec.reduce((sum: number, key: string) => sum + ((scores as any)[key] || 0), 0);
   return Math.round(total / path.riasec.length);
 }
 
 export const PathSelectionStep: React.FC = () => {
-  const { selectedPath, setSelectedPath, riasecScores } = useOnboardingStore();
+  const { selectedPath, setSelectedPath, riasecScores, dynamicPaths, isPathsLoading, fetchDynamicPaths } = useOnboardingStore();
+
+  useEffect(() => {
+    fetchDynamicPaths();
+  }, []);
 
   // Sort paths by interest match if RIASEC scores exist
   const sortedPaths = useMemo(() => {
-    if (!riasecScores) return CAREER_PATHS;
-    return [...CAREER_PATHS].sort(
+    if (!riasecScores) return dynamicPaths;
+    return [...dynamicPaths].sort(
       (a, b) => calculateInterestMatch(b, riasecScores) - calculateInterestMatch(a, riasecScores)
     );
-  }, [riasecScores]);
+  }, [riasecScores, dynamicPaths]);
+
+  if (isPathsLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 space-y-4">
+        <div className="w-12 h-12 border-4 border-black border-t-brutal-yellow rounded-full animate-spin"></div>
+        <h3 className="text-xl font-black text-black">AI is analyzing your profile...</h3>
+        <p className="text-black/60 font-medium text-center max-w-sm">
+          We are evaluating your current skills and interests to generate personalized career paths just for you.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -128,7 +69,7 @@ export const PathSelectionStep: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sortedPaths.map((path) => {
           const isSelected = selectedPath === path.id;
-          const Icon = path.icon;
+          const Icon = IconMap[path.icon as string] || Code;
           const match = riasecScores ? calculateInterestMatch(path, riasecScores) : null;
 
           return (
@@ -172,7 +113,7 @@ export const PathSelectionStep: React.FC = () => {
                   </div>
 
                   <div className="flex flex-wrap gap-1 mt-3">
-                    {path.skills.map((skill) => (
+                    {path.skills.map((skill: string) => (
                       <span
                         key={skill}
                         className="text-xs px-2 py-1 bg-black/5 text-black/70 border border-black/20 font-bold"

@@ -18,6 +18,7 @@ from app.features.community.routes import router as community_router
 from app.features.quiz.routes import router as quiz_router
 from app.features.certificates.routes import router as certificates_router
 from app.features.linkedin.routes import router as linkedin_router
+from app.features.onboarding.routes import router as onboarding_router
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -73,7 +74,7 @@ app.include_router(community_router)
 app.include_router(quiz_router)
 app.include_router(certificates_router)
 app.include_router(linkedin_router)
-
+app.include_router(onboarding_router)
 
 @app.get("/")
 async def root():
