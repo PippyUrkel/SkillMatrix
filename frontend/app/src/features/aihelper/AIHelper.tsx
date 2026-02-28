@@ -51,7 +51,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ variant = 'floating' }) => {
       let transcriptContext = "";
       if (activeVideoUrl) {
         try {
-          const res = await fetch(`http://localhost:8000/api/curriculum/transcript?youtube_url=${encodeURIComponent(activeVideoUrl)}`);
+          const res = await fetch(`http://${window.location.hostname}:8000/api/curriculum/transcript?youtube_url=${encodeURIComponent(activeVideoUrl)}`);
           if (res.ok) {
             const data = await res.json();
             transcriptContext = data.transcript;
