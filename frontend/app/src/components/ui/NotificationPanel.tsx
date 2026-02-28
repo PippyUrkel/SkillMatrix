@@ -57,7 +57,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ open, onCl
     return (
         <div
             ref={ref}
-            className="absolute right-0 top-full mt-2 w-96 bg-white border border-slate-200 rounded-none shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+            className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-96 max-w-sm bg-white border border-slate-200 rounded-none shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
         >
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
                 <h3 className="text-slate-900 font-semibold">Notifications</h3>

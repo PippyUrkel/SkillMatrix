@@ -50,7 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeItem, onNavigate }) => {
 
   return (
     <aside className={cn(
-      'fixed left-0 top-0 h-full bg-white border-r-4 border-black flex flex-col z-40 transition-all duration-300',
+      'fixed left-0 top-0 h-full bg-white border-r-4 border-black z-40 transition-all duration-300 hidden md:flex md:flex-col',
       isSidebarCollapsed ? 'w-20' : 'w-64'
     )}>
       {/* Logo & Toggle */}

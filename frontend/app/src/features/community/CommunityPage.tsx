@@ -112,7 +112,7 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate }) => {
     if (selectedPost) {
         return (
             <DashboardLayout activeItem="community" onNavigate={onNavigate} title="Community">
-                <div className="max-w-4xl mx-auto">
+                <div className="w-full max-w-4xl mx-auto pb-8 md:pb-0">
                     {/* Back button */}
                     <button
                         onClick={() => setSelectedPost(null)}
@@ -257,9 +257,9 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate }) => {
     // ── Main Feed View ──
     return (
         <DashboardLayout activeItem="community" onNavigate={onNavigate} title="Community">
-            <div className="flex gap-6">
+            <div className="flex flex-col xl:flex-row gap-6 pb-8 md:pb-0">
                 {/* ── Left: Group sidebar ── */}
-                <div className="w-64 flex-shrink-0 space-y-3">
+                <div className="w-full xl:w-64 flex-shrink-0 space-y-3">
                     <div
                         className="bg-white border-[3px] border-black p-4"
                         style={{ boxShadow: '4px 4px 0 #000' }}
@@ -458,7 +458,7 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate }) => {
                 </div>
 
                 {/* ── Right: Leaderboard ── */}
-                <div className="w-64 flex-shrink-0 space-y-3">
+                <div className="w-full xl:w-64 flex-shrink-0 space-y-3 mt-4 xl:mt-0">
                     {/* Leaderboard */}
                     <div
                         className="bg-white border-[3px] border-black p-4"

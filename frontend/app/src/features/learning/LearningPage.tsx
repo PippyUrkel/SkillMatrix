@@ -192,7 +192,6 @@ const CourseLibrary: React.FC<{
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {courses.map((course) => {
             const totalLessons = course.modules?.reduce((s: number, m: any) => s + m.lessons.length, 0) ?? 0;
-            const doneLessons = course.modules?.reduce((s: number, m: any) => s + m.lessons.filter((l: any) => l.completed).length, 0) ?? 0;
             return (
               <MatrixCard
                 key={course.id}
@@ -697,7 +696,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
 
   return (
     <DashboardLayout activeItem="learning" onNavigate={onNavigate} title="Learning Path">
-      <div className="flex gap-6 h-[calc(100vh-130px)]">
+      <div className="flex flex-col lg:flex-row gap-6 lg:h-[calc(100vh-130px)]">
 
         {/* ─── Left: Video + Tabs ─── */}
         <div className={cn(
@@ -887,7 +886,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
 
         {/* ─── Right: Module Accordion ─── */}
         {!focusMode && (
-          <div className="w-[360px] flex-shrink-0 flex flex-col bg-white border border-slate-200 rounded-none overflow-hidden">
+          <div className="w-full lg:w-[360px] flex-shrink-0 flex flex-col bg-white border border-slate-200 rounded-none overflow-hidden min-h-[400px] lg:min-h-0">
             <div className="p-4 border-b border-slate-100 flex-shrink-0">
               <h3 className="font-bold text-slate-900 text-sm">Course Content</h3>
               <p className="text-xs text-slate-400 mt-1">
@@ -1074,7 +1073,7 @@ export const LearningPage: React.FC<LearningPageProps> = ({ onNavigate }) => {
       {showLinkedInModal && activeCourse && (
         <LinkedInPostGenerator
           courseName={showLinkedInModal}
-          skillsGained={activeCourse.modules.flatMap(m => m.topics || [])}
+          skillsGained={activeCourse.skills || []}
           onClose={() => setShowLinkedInModal(null)}
         />
       )}
