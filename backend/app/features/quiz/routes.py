@@ -1,13 +1,14 @@
 import json
 import uuid
+import httpx
 from fastapi import APIRouter, HTTPException, Depends
-from ollama import generate
 from json_repair import repair_json
-from ...dependencies import get_current_user
-from ...config import settings
+from ...middleware.auth_middleware import get_current_user
+from ...config import get_settings
 from .schemas import QuizGenerateRequest, QuizGenerateResponse, QuizSubmitRequest, QuizSubmitResponse, QuizQuestion
 
 router = APIRouter(prefix="/quiz", tags=["Quiz Generation"])
+settings = get_settings()
 
 QUIZ_PROMPT = """You are an expert educational assessment creator. 
 Create a multiple-choice quiz about "{topic}" with exactly {num_questions} questions at a {difficulty} difficulty level.
@@ -37,13 +38,20 @@ async def generate_quiz(request: QuizGenerateRequest, user_id: str = Depends(get
             num_questions=request.num_questions,
             difficulty=request.difficulty
         )
+        # Make HTTP request to Ollama endpoint
+        ollama_url = f"{settings.ollama_endpoint.rstrip('/')}/api/generate"
+        payload = {
+            "model": settings.ollama_model,
+            "prompt": prompt,
+            "stream": False
+        }
         
-        response = generate(
-            model=settings.OLLAMA_MODEL, 
-            prompt=prompt,
-        )
-        
-        raw_json = response.get('response', '')
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(ollama_url, json=payload, timeout=60.0)
+            resp.raise_for_status()
+            response_data = resp.json()
+            
+        raw_json = response_data.get('response', '')
         
         # Repair and parse the JSON since LLMs can be flaky
         try:
