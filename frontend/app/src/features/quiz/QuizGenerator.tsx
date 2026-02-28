@@ -15,11 +15,12 @@ interface QuizQuestion {
 }
 
 interface QuizGeneratorProps {
-    topic: string;
+    topics: string[];
+    numQuestions: number;
     onClose?: () => void;
 }
 
-export const QuizGenerator: React.FC<QuizGeneratorProps> = ({ topic, onClose }) => {
+export const QuizGenerator: React.FC<QuizGeneratorProps> = ({ topics, numQuestions, onClose }) => {
     const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [currentIdx, setCurrentIdx] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
@@ -29,10 +30,11 @@ export const QuizGenerator: React.FC<QuizGeneratorProps> = ({ topic, onClose }) 
     const handleGenerate = async () => {
         setIsGenerating(true);
         try {
+            const combinedTopic = topics.join(', ');
             const res = await api.post<{ topic: string, questions: QuizQuestion[] }>('/api/quiz/generate', {
-                topic,
+                topic: combinedTopic,
                 difficulty: 'medium',
-                num_questions: 5
+                num_questions: numQuestions
             });
             setQuestions(res.questions);
             setCurrentIdx(0);
@@ -89,7 +91,7 @@ export const QuizGenerator: React.FC<QuizGeneratorProps> = ({ topic, onClose }) 
                 </div>
                 <h3 className="text-xl font-black uppercase tracking-widest text-black mb-2">Knowledge Check</h3>
                 <p className="text-sm font-bold text-black/60 mb-6 max-w-sm mx-auto">
-                    Generate a custom 5-question AI quiz to test your understanding of "{topic}".
+                    Generate a custom {numQuestions}-question AI quiz spanning {topics.length} selected topic(s).
                 </p>
                 <MatrixButton onClick={handleGenerate} disabled={isGenerating}>
                     {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Brain className="w-4 h-4 mr-2" />}
@@ -152,9 +154,11 @@ export const QuizGenerator: React.FC<QuizGeneratorProps> = ({ topic, onClose }) 
                     <div className="w-10 h-10 bg-brutal-yellow border-[3px] border-black flex items-center justify-center shadow-[2px_2px_0_0_#000]">
                         <span className="font-black text-xs">{currentIdx + 1}/{questions.length}</span>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <h3 className="font-black uppercase tracking-widest text-sm">Quiz</h3>
-                        <p className="text-xs font-bold text-black/50 truncate max-w-[200px]">{topic}</p>
+                        <p className="text-xs font-bold text-black/50 truncate max-w-[200px]" title={topics.join(', ')}>
+                            {topics.length > 2 ? `${topics.length} Selected Topics` : topics.join(', ')}
+                        </p>
                     </div>
                 </div>
             </div>
