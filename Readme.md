@@ -75,3 +75,7 @@ SkillMatrix/
 - **Progress Tracking** — XP system, streaks, and achievement badges
 
 ![COURSE_BUILDER](public/course_builder.png)
+![JOB_MATCHING](public/JOB_MATCHING.png)
+![SKILL_GAP](public/SKILL_GAP.png)
+![PROGRESS](public/PROGRESS.png)
+![COMMUNITY](public/COMMUNITY.png)
