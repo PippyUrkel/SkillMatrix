@@ -1,5 +1,7 @@
 # SkillMatrix
 
+![HeroSection](public/hero_section.png)
+
 AI-powered career guidance platform. Analyzes your skills against real job market demands, identifies gaps, and generates personalized learning paths.
 
 ## Tech Stack
@@ -72,18 +74,4 @@ SkillMatrix/
 - **Adaptive Curriculum** — FL results tell the LLM to expand or shorten modules
 - **Progress Tracking** — XP system, streaks, and achievement badges
 
-## API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/auth/login` | Login |
-| POST | `/api/auth/signup` | Signup |
-| GET | `/api/auth/me` | Current user |
-| GET | `/api/profile/` | User profile + skills |
-| POST | `/api/curriculum/generate` | Generate course |
-| POST | `/api/fl/assess` | FL comprehension assessment |
-| POST | `/api/curriculum/adapt` | FL assess → LLM adapt module |
-
-## License
-
-MIT
+![COURSE_BUILDER](public/course_builder.png)
