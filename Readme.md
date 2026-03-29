@@ -78,4 +78,5 @@ SkillMatrix/
 ![JOB_MATCHING](public/JOB_MATCHING.png)
 ![SKILL_GAP](public/SKILL_GAP.png)
 ![PROGRESS](public/PROGRESS.png)
+![CERTIFICATION](public/CERTIFICATION.png)
 ![COMMUNITY](public/COMMUNITY.png)
